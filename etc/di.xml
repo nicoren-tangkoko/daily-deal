@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="daily_deal" xsi:type="object">MageSuite\DailyDeal\Console\Command\DailyDealRefresh</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <preference for="MageSuite\DailyDeal\Service\OfferManagerInterface"
+                type="MageSuite\DailyDeal\Service\OfferManager" />
+
+    <virtualType name="Magento\Catalog\Pricing\Price\Pool" type="Magento\Framework\Pricing\Price\Pool">
+        <arguments>
+            <argument name="prices" xsi:type="array">
+                <item name="offer_price" xsi:type="string">MageSuite\DailyDeal\Pricing\Price\OfferPrice</item>
+                <item name="final_price_without_daily_deal" xsi:type="string">MageSuite\DailyDeal\Pricing\Price\FinalPriceWithoutDailyDeal</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="MageSuite\DailyDeal\Service\CacheCleaner">
+        <arguments>
+            <argument name="cacheList" xsi:type="array">
+                <item name="block_html" xsi:type="const">Magento\Framework\App\Cache\Type\Block::TYPE_IDENTIFIER</item>
+                <item name="collections" xsi:type="const">Magento\Framework\App\Cache\Type\Collection::TYPE_IDENTIFIER</item>
+                <item name="reflection" xsi:type="const">Magento\Framework\App\Cache\Type\Reflection::TYPE_IDENTIFIER</item>
+                <item name="full_page" xsi:type="const">\Magento\PageCache\Model\Cache\Type::TYPE_IDENTIFIER</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Quote\Model\QuoteManagement">
+        <plugin name="verify_offer_in_checkout" type="\MageSuite\DailyDeal\Plugin\VerifyOfferInCheckout"
+                sortOrder="10"/>
+    </type>
+
+    <type name="Magento\Checkout\Model\Cart">
+        <plugin name="update_offer_in_cart" type="\MageSuite\DailyDeal\Plugin\UpdateOfferInCart"
+                sortOrder="10"/>
+    </type>
+
+    <type name="Magento\Quote\Model\Quote\Item">
+        <plugin name="group_offer_items" type="MageSuite\DailyDeal\Plugin\GroupOfferItems"
+                sortOrder="10" />
+    </type>
+
+    <type name="Magento\Checkout\Model\Cart">
+        <plugin name="disable_reordering_offer" type="MageSuite\DailyDeal\Plugin\DisableReorderingOffer"
+                sortOrder="10" />
+    </type>
+
+    <type name="MageSuite\Frontend\Helper\Product">
+        <plugin name="get_sale_origin" type="MageSuite\DailyDeal\Plugin\DailyDealSaleOriginPlugin"
+                sortOrder="10" />
+    </type>
+
+    <type name="Magento\Checkout\Controller\Cart\Index">
+        <plugin name="recalculate_cart_on_view" type="MageSuite\DailyDeal\Plugin\RecalculateCartOnCartView" sortOrder="1" />
+    </type>
+    
+</config>
