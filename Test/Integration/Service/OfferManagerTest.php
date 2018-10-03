@@ -48,15 +48,19 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
     {
         $offers = $this->offerManager->getOffers();
 
-        $this->assertCount(6, $offers);
-        $this->assertCount(12, $offers[0]);
-        $this->assertEquals(600, $offers[0]['entity_id']);
-        $this->assertEquals(601, $offers[1]['entity_id']);
+        $offersArray = [];
+        foreach($offers as $offer){
+            $offersArray[] = $offer;
+        }
 
-        $this->assertEquals('2018-03-19 00:00:00', $offers[0]['daily_deal_from']);
-        $this->assertEquals('2031-03-22 08:00:00', $offers[0]['daily_deal_to']);
-        $this->assertEquals(20, $offers[1]['daily_deal_limit']);
-        $this->assertEquals(1, $offers[1]['daily_deal_enabled']);
+        $this->assertCount(6, $offersArray);
+        $this->assertEquals(600, $offersArray[0]->getId());
+        $this->assertEquals(601, $offersArray[1]->getId());
+
+        $this->assertEquals('2018-03-19 00:00:00', $offersArray[0]->getDailyDealFrom());
+        $this->assertEquals('2031-03-22 08:00:00', $offersArray[0]->getDailyDealTo());
+        $this->assertEquals(20, $offersArray[1]->getDailyDealLimit());
+        $this->assertEquals(1, $offersArray[1]->getDailyDealEnabled());
     }
 
     /**
@@ -78,27 +82,36 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
 
         $offers = $this->offerManager->getOffers();
 
-        $this->assertNull($this->offerManager->getOfferAction($offers[0], $qtyLimitation));
+        $offersArray = [];
+        foreach($offers as $offer){
+            $offersArray[] = $offer;
+        }
+
+        $this->assertNull($this->offerManager->getOfferAction($offersArray[0], $qtyLimitation));
 
         $this->assertEquals(
             \MageSuite\DailyDeal\Service\OfferManager::TYPE_REMOVE,
-            $this->offerManager->getOfferAction($offers[1], $qtyLimitation));
+            $this->offerManager->getOfferAction($offersArray[1], $qtyLimitation));
 
         $this->assertEquals(
             \MageSuite\DailyDeal\Service\OfferManager::TYPE_ADD,
-            $this->offerManager->getOfferAction($offers[2], $qtyLimitation));
+            $this->offerManager->getOfferAction($offersArray[2], $qtyLimitation));
 
-        $product = $this->productRepository->getById($offers[1]['entity_id']);
 
-        $this->assertEquals(1, $product->getDailyDealEnabled());
-        $this->offerManager->applyAction($offers[1]['entity_id'], \MageSuite\DailyDeal\Service\OfferManager::TYPE_REMOVE);
-        $this->assertEquals(0, $this->offerResource->getAttributeValue($offers[1]['entity_id'], 'daily_deal_enabled', $storeId));
+        $this->assertEquals(1, $offersArray[1]->getDailyDealEnabled());
 
-        $product = $this->productRepository->getById($offers[2]['entity_id']);
+        $this->offerManager->applyAction($offersArray[1], \MageSuite\DailyDeal\Service\OfferManager::TYPE_REMOVE);
+        $product = $this->productRepository->get($offersArray[1]->getSku());
 
         $this->assertEquals(0, $product->getDailyDealEnabled());
-        $this->offerManager->applyAction($offers[2]['entity_id'], \MageSuite\DailyDeal\Service\OfferManager::TYPE_ADD);
-        $this->assertEquals(1, $this->offerResource->getAttributeValue($offers[2]['entity_id'], 'daily_deal_enabled', $storeId));
+
+
+        $this->assertEquals(0, $offersArray[2]->getDailyDealEnabled());
+
+        $this->offerManager->applyAction($offersArray[2], \MageSuite\DailyDeal\Service\OfferManager::TYPE_ADD);
+        $product = $this->productRepository->get($offersArray[2]->getSku());
+
+        $this->assertEquals(1, $product->getDailyDealEnabled());
     }
 
     public static function loadProducts()

@@ -5,11 +5,6 @@ namespace MageSuite\DailyDeal\Service;
 class CacheCleaner
 {
     /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface
-     */
-    protected $productRepository;
-
-    /**
      * @var \MageSuite\DailyDeal\Block\Product
      */
     protected $productBlock;
@@ -20,89 +15,42 @@ class CacheCleaner
     protected $cache;
 
     /**
-     * @var \Magento\Framework\App\Cache\Type\FrontendPool
+     * @var \Magento\Framework\Indexer\CacheContext
      */
-    protected $cachePool;
+    protected $cacheContext;
 
     /**
-     * @var array
+     * @var \Magento\Framework\Event\Manager
      */
-    private $cacheList;
-
-    /**
-     * @var \Magento\Framework\App\Cache\StateInterface
-     */
-    private $cacheState;
-
-    /**
-     * @var \Magento\PageCache\Model\Config
-     */
-    private $pageCacheConfig;
-
-    /**
-     * @var \Magento\Framework\App\Cache\StateInterface
-     */
-    private $purgeCache;
+    protected $eventManager;
 
     public function __construct(
-        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \MageSuite\DailyDeal\Block\Product $productBlock,
         \Magento\Framework\App\CacheInterface $cache,
-        \Magento\Framework\App\Cache\Type\FrontendPool $cachePool,
-        \Magento\Framework\App\Cache\StateInterface $cacheState,
-        \Magento\PageCache\Model\Config $pageCacheConfig,
-        \Magento\CacheInvalidate\Model\PurgeCache $purgeCache,
-        array $cacheList
+        \Magento\Framework\Indexer\CacheContext $cacheContext,
+        \Magento\Framework\Event\Manager $eventManager
     ) {
-        $this->productRepository = $productRepository;
         $this->productBlock = $productBlock;
         $this->cache = $cache;
-        $this->cachePool = $cachePool;
-        $this->cacheState = $cacheState;
-        $this->cacheList = $cacheList;
-        $this->pageCacheConfig = $pageCacheConfig;
-        $this->purgeCache = $purgeCache;
+        $this->cacheContext = $cacheContext;
+        $this->eventManager = $eventManager;
     }
 
-    public function refreshProductCache($productId)
+    public function refreshProductCache($product)
     {
-        $product = $this->productRepository->getById($productId);
-
         if(!$product){
             return false;
         }
 
-        $blockCacheTag = $this->productBlock->getCacheTag($productId);
-
-        $this->cache->remove($blockCacheTag);
-
+        $blockCacheTag = $this->productBlock->getCacheTag($product->getId());
         $tags = array_merge($product->getIdentities(), [$blockCacheTag, 'virtual_category']);
 
         if (empty($tags)) {
             return false;
         }
 
-        foreach ($this->cacheList as $cacheType) {
-            if ($this->cacheState->isEnabled($cacheType)) {
-                $this->cachePool->get($cacheType)->clean(
-                    \Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG,
-                    array_unique($tags)
-                );
-            }
-        }
-
-        $this->purgeCacheByTags(implode('|', $tags));
-
-        return true;
-    }
-
-    private function purgeCacheByTags($tags)
-    {
-        $cacheType = $this->pageCacheConfig->getType();
-        $isFpcEnabled = $this->pageCacheConfig->isEnabled();
-
-        if ($cacheType == \Magento\PageCache\Model\Config::VARNISH and $isFpcEnabled === true) {
-            $this->purgeCache->sendPurgeRequest($tags);
-        }
+        $this->cache->clean($tags);
+        $this->cacheContext->registerTags($tags);
+        $this->eventManager->dispatch('clean_cache_by_tags', ['object' => $this->cacheContext]);
     }
 }

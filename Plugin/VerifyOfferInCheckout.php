@@ -62,7 +62,7 @@ class VerifyOfferInCheckout
                 continue;
             }
 
-            $validate = $this->offerManager->validateOfferInQuote($item->getProductId(), $item->getQty());
+            $validate = $this->offerManager->validateOfferInQuote($item->getProduct(), $item->getQty());
 
             if(!$validate){
                 break;
@@ -72,7 +72,7 @@ class VerifyOfferInCheckout
         if(!$validate){
 
             $this->offerManager->applyAction(
-                $item->getProductId(),
+                $item->getProduct(),
                 \MageSuite\DailyDeal\Service\OfferManager::TYPE_REMOVE
             );
 

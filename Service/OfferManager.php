@@ -106,7 +106,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
                 continue;
             }
 
-            $this->applyAction($offer['entity_id'], $action);
+            $this->applyAction($offer, $action);
         }
 
         return true;
@@ -118,20 +118,18 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
         $items = $this->offerResource->getOffersByParameters($this->timestamp, $this->storeId);
 
-        foreach($items as $key => $item){
-            $items[$key]['daily_deal_limit'] = $this->offerResource->getAttributeValue($item['entity_id'], 'daily_deal_limit', $this->storeManager->getStore()->getId());
-        }
-
         return $items;
     }
 
     public function getOfferAction($offer, $isQtyLimitationEnabled)
     {
-        $from = $offer['daily_deal_from'] ? strtotime($offer['daily_deal_from']) : null;
-        $to = $offer['daily_deal_to'] ? strtotime($offer['daily_deal_to']) : null;
-        $productQty = $this->stockInterface->getStockQty($offer['entity_id']);
+        $offerData = $offer->getData();
 
-        if($offer['daily_deal_enabled']){
+        $from = $offerData['daily_deal_from'] ? strtotime($offerData['daily_deal_from']) : null;
+        $to = $offerData['daily_deal_to'] ? strtotime($offerData['daily_deal_to']) : null;
+        $productQty = $offer->getTypeId() == \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE ? $this->stockInterface->getStockQty($offerData['entity_id']) : null;
+
+        if($offerData['daily_deal_enabled']){
 
             if($productQty !== null and $productQty < 1){
                 return self::TYPE_REMOVE;
@@ -145,7 +143,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
                 return self::TYPE_REMOVE;
             }
 
-            if($isQtyLimitationEnabled and $offer['daily_deal_limit'] !== null and (float)$offer['daily_deal_limit'] == 0){
+            if($isQtyLimitationEnabled and $offerData['daily_deal_limit'] !== null and (float)$offerData['daily_deal_limit'] == 0){
                 return self::TYPE_REMOVE;
             }
 
@@ -159,7 +157,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
                 return null;
             }
 
-            if($isQtyLimitationEnabled and $offer['daily_deal_limit'] !== null and (float)$offer['daily_deal_limit'] == 0){
+            if($isQtyLimitationEnabled and $offerData['daily_deal_limit'] !== null and (float)$offerData['daily_deal_limit'] == 0){
                 return null;
             }
 
@@ -171,21 +169,24 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         return null;
     }
 
-    public function applyAction($productId, $action)
+    public function applyAction($product, $action)
     {
-        $this->offerResource->setAttributeValue($productId, 'daily_deal_enabled', $action, $this->storeId);
+        $product->setDailyDealEnabled($action);
+        $product->getResource()->saveAttribute($product, 'daily_deal_enabled');
+
+        $product->setStoreId($this->storeId)->save();
 
         if($action == self::TYPE_REMOVE){
-            $this->removeProductFromQuotes($productId);
+            $this->removeProductFromQuotes($product);
         }
 
-        $this->refreshProductIndex($productId);
-        $this->refreshProductCache($productId);
+        $this->refreshProductIndex($product);
+        $this->refreshProductCache($product);
     }
 
-    private function removeProductFromQuotes($productId)
+    private function removeProductFromQuotes($product)
     {
-        $items = $this->offerResource->getItemsByProductId($productId);
+        $items = $this->offerResource->getItemsByProductId($product->getId());
 
         if(empty($items)){
             return true;
@@ -209,7 +210,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         return true;
     }
 
-    public function refreshProductIndex($productId)
+    public function refreshProductIndex($product)
     {
         $indexes = ['catalogsearch_fulltext', 'catalog_product_price'];
 
@@ -217,56 +218,52 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
             /** @var \Magento\Indexer\Model\Indexer $indexer */
             $indexer = $this->indexerFactory->create();
             $indexer->load($indexId);
-            $indexer->reindexRow($productId);
+            $indexer->reindexRow($product->getId());
         }
     }
 
-    public function refreshProductCache($productId)
+    public function refreshProductCache($product)
     {
-        $this->cacheCleaner->refreshProductCache($productId);
+        $this->cacheCleaner->refreshProductCache($product);
     }
 
-    public function getOfferPrice($productId)
+    public function getOfferPrice($product)
     {
         $this->setStoreId(null);
 
-        if(!$this->offerData->isOfferEnabled($productId)){
+        if(!$this->offerData->isOfferEnabled($product)){
             return null;
         }
 
-        $price = $this->offerResource->getAttributeValue($productId, 'daily_deal_price', $this->storeManager->getStore()->getId());
-
-        return $price;
+        return $product->getDailyDealPrice();
     }
 
-    public function getOfferLimit($productId)
+    public function getOfferLimit($product)
     {
-        if(!$this->offerData->isOfferEnabled($productId)){
+        if(!$this->offerData->isOfferEnabled($product)){
             return null;
         }
 
-        $limit = $this->offerResource->getAttributeValue($productId, 'daily_deal_limit', $this->storeManager->getStore()->getId());
-
-        return $limit;
+        return $product->getDailyDealLimit();
     }
 
-    public function getProductParentId($productId)
+    public function getParentProduct($product)
     {
-        return $this->offerResource->getProductParentId($productId);
+        return $this->offerResource->getParentProduct($product);
     }
 
-    public function getProductQtyInCart($productId, $quoteId)
+    public function getProductQtyInCart($product, $quoteId)
     {
-        return $this->offerResource->getProductQtyInCart($productId, $quoteId);
+        return $this->offerResource->getProductQtyInCart($product->getId(), $quoteId);
     }
 
-    public function validateOfferInQuote($productId, $qty)
+    public function validateOfferInQuote($product, $qty)
     {
         if(!$qty){
             return false;
         }
 
-        if(!$this->offerData->isOfferEnabled($productId)){
+        if(!$this->offerData->isOfferEnabled($product)){
             return false;
         }
 
@@ -276,19 +273,20 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
             return true;
         }
 
-        $limit = $this->offerResource->getAttributeValue($productId, 'daily_deal_limit', $this->storeManager->getStore()->getId());
+        $limit = $product->getDailyDealLimit();
 
         return (float)$qty <= (float)$limit ? true : false;
     }
 
     /**
-     * @param $productId
+     * @param $product
      * @param null $qty
+     * @param int $storeId
      * @return bool
      */
-    public function decreaseOfferLimit($productId, $qty = null)
+    public function decreaseOfferLimit($product, $qty = null, $storeId = 0)
     {
-        if(!$this->offerData->isOfferEnabled($productId)){
+        if(!$this->offerData->isOfferEnabled($product)){
             return true;
         }
 
@@ -297,20 +295,22 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         }
 
         $qty = $qty ? $qty : 1;
-        $storeId = $this->storeManager->getStore()->getId();
 
-        $currentValue = $this->offerResource->getAttributeValue($productId, 'daily_deal_limit', $storeId);
+        $currentValue = $product->getDailyDealLimit();
 
         $newValue = max(0, $currentValue - $qty);
 
-        $this->offerResource->setAttributeValue($productId, 'daily_deal_limit', $newValue, $storeId);
+        $product->setDailyDealLimit($newValue);
+        $product->getResource()->saveAttribute($product, 'daily_deal_limit');
+
+        $product->setStoreId($storeId)->save();
 
         if($newValue == 0){
-            $this->applyAction($productId, self::TYPE_REMOVE);
+            $this->applyAction($product, self::TYPE_REMOVE);
         }
 
-        $this->refreshProductIndex($productId);
-        $this->refreshProductCache($productId);
+        $this->refreshProductIndex($product);
+        $this->refreshProductCache($product);
 
         return true;
     }

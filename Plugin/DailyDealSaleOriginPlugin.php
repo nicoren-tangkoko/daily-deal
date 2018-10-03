@@ -19,7 +19,7 @@ class DailyDealSaleOriginPlugin
 
     public function aroundGetSaleOrigin(\MageSuite\Frontend\Helper\Product $subject, callable $proceed, $product)
     {
-        $offerPrice = $this->offerManager->getOfferPrice($product->getId());
+        $offerPrice = $this->offerManager->getOfferPrice($product);
 
         if(!$offerPrice){
             return $proceed($product);

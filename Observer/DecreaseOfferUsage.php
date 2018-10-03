@@ -44,7 +44,7 @@ class DecreaseOfferUsage implements \Magento\Framework\Event\ObserverInterface
                 continue;
             }
 
-            $this->offerManager->decreaseOfferLimit($item->getProductId(), $item->getQtyOrdered());
+            $this->offerManager->decreaseOfferLimit($item->getProduct(), $item->getQtyOrdered(), $order->getStoreId());
         }
 
         return $this;

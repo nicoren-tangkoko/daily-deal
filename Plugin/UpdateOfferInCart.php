@@ -69,10 +69,12 @@ class UpdateOfferInCart
                 continue;
             }
 
-            $offerLimit = $this->offerManager->getOfferLimit($item->getProductId());
+            $product = $item->getProduct();
 
-            if($item->getProduct()->getTypeId() != 'simple'){
-                $qtyAmountInCart = $this->offerManager->getProductQtyInCart($item->getProductId(), $item->getQuoteId());
+            $offerLimit = $this->offerManager->getOfferLimit($product);
+
+            if($product->getTypeId() != 'simple'){
+                $qtyAmountInCart = $this->offerManager->getProductQtyInCart($product, $item->getQuoteId());
 
                 // We need to decrease quantity by actual product qty
                 $qtyAmountInCart = $qtyAmountInCart - $oldQty;
@@ -87,7 +89,7 @@ class UpdateOfferInCart
             $data[$itemId]['qty'] = $offerLimit;
             $data[$itemId]['before_suggest_qty'] = $offerLimit;
 
-            $this->messageManager->addNoticeMessage(__('Requested amount of %1 isn\'t available.', $item->getProduct()->getName()));
+            $this->messageManager->addNoticeMessage(__('Requested amount of %1 isn\'t available.', $product->getName()));
         }
 
         return [$data];

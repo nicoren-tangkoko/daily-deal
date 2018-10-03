@@ -64,17 +64,16 @@ class OfferPrice extends \Magento\Framework\Pricing\Price\AbstractPrice implemen
     {
         if (!$this->value) {
 
-            $productId = $this->product->getId();
-            $parentId = $this->offerManager->getProductParentId($productId);
+            $parentProduct = $this->offerManager->getParentProduct($this->product);
 
-            $productId = $parentId ? $parentId : $productId;
+            $product = $parentProduct ? $parentProduct : $this->product;
 
-            if(!$productId){
+            if(!$product or !$product->getId()){
                 $this->value = false;
                 return $this->value;
             }
 
-            $offerPrice = $this->offerManager->getOfferPrice($productId);
+            $offerPrice = $this->offerManager->getOfferPrice($product);
             $priceInCurrentCurrency = $this->priceCurrency->convertAndRound($offerPrice);
 
             $this->value = $priceInCurrentCurrency ? floatval($priceInCurrentCurrency) : false;

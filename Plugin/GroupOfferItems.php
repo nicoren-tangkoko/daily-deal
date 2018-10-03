@@ -37,11 +37,11 @@ class GroupOfferItems
             return $proceed($product);
         }
 
-        if(!$this->offerManager->getOfferPrice($product->getId())){
+        if($subject->getProductId() != $product->getId()){
             return $proceed($product);
         }
 
-        if($subject->getProductId() != $product->getId()){
+        if(!$this->offerManager->getOfferPrice($product)){
             return $proceed($product);
         }
 

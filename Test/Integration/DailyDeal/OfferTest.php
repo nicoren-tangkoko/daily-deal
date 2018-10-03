@@ -58,10 +58,10 @@ class OfferTest extends \PHPUnit\Framework\TestCase
      */
     public function testItAddsProductWithCorrectValues()
     {
-        $productId = 604;
+        $product = $this->productRepository->get('actual_offer');
         $offerKey = \MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER;
 
-        $this->cart->addProduct($productId, []);
+        $this->cart->addProduct($product, []);
 
         $items = $this->cart->getQuote()->getAllItems();
 
@@ -96,12 +96,12 @@ class OfferTest extends \PHPUnit\Framework\TestCase
     {
         $product = $this->productRepository->get('offer_with_special_price');
 
-        $offerPrice = $this->offerManager->getOfferPrice($product->getId());
+        $offerPrice = $this->offerManager->getOfferPrice($product);
 
         $this->assertEquals(10, $offerPrice);
         $this->assertEquals(5, $product->getSpecialPrice());
 
-        $this->cart->addProduct($product->getId(), []);
+        $this->cart->addProduct($product, []);
 
         $items = $this->cart->getQuote()->getAllItems();
 
@@ -122,14 +122,15 @@ class OfferTest extends \PHPUnit\Framework\TestCase
      */
     public function testItDecreaseOfferUsage()
     {
-        $productId = 604;
-        $storeId = 1;
+        $product = $this->productRepository->get('actual_offer');
 
-        $this->assertEquals(20, $this->offerResource->getAttributeValue($productId, 'daily_deal_limit', $storeId));
+        $this->assertEquals(20, $product->getDailyDealLimit());
 
-        $this->offerManager->decreaseOfferLimit($productId, 15);
+        $this->offerManager->decreaseOfferLimit($product, 15);
 
-        $this->assertEquals(5, $this->offerResource->getAttributeValue($productId, 'daily_deal_limit', $storeId));
+        $product = $this->productRepository->get('actual_offer');
+
+        $this->assertEquals(5, $product->getDailyDealLimit());
     }
 
     /**
@@ -143,17 +144,16 @@ class OfferTest extends \PHPUnit\Framework\TestCase
     public function testItDecreaseOfferUsageAfterCreateOrder()
     {
         $this->markTestSkipped();
-
-        $productId = 604;
         $qty = 2;
-        $storeId = 1;
 
-        $this->assertEquals(20, $this->offerResource->getAttributeValue($productId, 'daily_deal_limit', $storeId));
+        $product = $this->productRepository->get('actual_offer');
+        $this->assertEquals(20, $product->getDailyDealLimit());
 
-        $quote = $this->prepareQuote($productId, $qty);
+        $quote = $this->prepareQuote($product, $qty);
         $this->quoteManagement->submit($quote);
 
-        $this->assertEquals(18, $this->offerResource->getAttributeValue($productId, 'daily_deal_limit', $storeId));
+        $product = $this->productRepository->get('actual_offer');
+        $this->assertEquals(18, $product->getDailyDealLimit());
     }
 
     /**
@@ -166,12 +166,12 @@ class OfferTest extends \PHPUnit\Framework\TestCase
      */
     public function testItLimitProductQtyInCart()
     {
-        $productId = 604;
         $storeId = 1;
 
-        $this->assertEquals(20, $this->offerResource->getAttributeValue($productId, 'daily_deal_limit', $storeId));
+        $product = $this->productRepository->get('actual_offer');
+        $this->assertEquals(20, $product->getDailyDealLimit());
 
-        $this->cart->addProduct($productId, ['qty' => 25]);
+        $this->cart->addProduct($product, ['qty' => 25]);
 
         $items = $this->cart->getQuote()->getAllItems();
 
@@ -194,9 +194,9 @@ class OfferTest extends \PHPUnit\Framework\TestCase
         require __DIR__ . '/../_files/products_rollback.php';
     }
 
-    private function prepareQuote($productId, $qty)
+    private function prepareQuote($product, $qty)
     {
-        $this->cart->addProduct($productId, ['qty' => $qty]);
+        $this->cart->addProduct($product, ['qty' => $qty]);
 
         $addressData = [
             'region' => 'CA',

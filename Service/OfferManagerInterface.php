@@ -6,17 +6,17 @@ interface OfferManagerInterface
 {
     public function getOffers();
 
-    public function applyAction($productId, $action);
+    public function applyAction($product, $action);
 
-    public function refreshProductCache($productId);
+    public function refreshProductCache($product);
 
-    public function getOfferPrice($productId);
+    public function getOfferPrice($product);
 
-    public function getOfferLimit($productId);
+    public function getOfferLimit($product);
 
-    public function validateOfferInQuote($productId, $qty);
+    public function validateOfferInQuote($product, $qty);
 
-    public function decreaseOfferLimit($productId, $qty);
+    public function decreaseOfferLimit($product, $qty, $storeId);
 
-    public function getProductParentId($productId);
+    public function getParentProduct($product);
 }

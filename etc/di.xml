@@ -22,17 +22,6 @@
         </arguments>
     </virtualType>
 
-    <type name="MageSuite\DailyDeal\Service\CacheCleaner">
-        <arguments>
-            <argument name="cacheList" xsi:type="array">
-                <item name="block_html" xsi:type="const">Magento\Framework\App\Cache\Type\Block::TYPE_IDENTIFIER</item>
-                <item name="collections" xsi:type="const">Magento\Framework\App\Cache\Type\Collection::TYPE_IDENTIFIER</item>
-                <item name="reflection" xsi:type="const">Magento\Framework\App\Cache\Type\Reflection::TYPE_IDENTIFIER</item>
-                <item name="full_page" xsi:type="const">\Magento\PageCache\Model\Cache\Type::TYPE_IDENTIFIER</item>
-            </argument>
-        </arguments>
-    </type>
-
     <type name="Magento\Quote\Model\QuoteManagement">
         <plugin name="verify_offer_in_checkout" type="\MageSuite\DailyDeal\Plugin\VerifyOfferInCheckout"
                 sortOrder="10"/>

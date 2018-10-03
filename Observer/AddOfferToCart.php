@@ -62,15 +62,15 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
         $item = $observer->getEvent()->getData('quote_item');
         $item = $item->getParentItem() ? $item->getParentItem() : $item;
 
-        $productId = $item->getProductId();
+        $product = $item->getProduct();
 
-        $offerPrice = $this->offerManager->getOfferPrice($productId);
+        $offerPrice = $this->offerManager->getOfferPrice($product);
 
         if(!$offerPrice){
             return $this;
         }
 
-        $finalPrice = $item->getProduct()->getFinalPrice();
+        $finalPrice = $product->getFinalPrice();
         $offerPrice = min($finalPrice, $offerPrice);
 
         if(!$this->configuration->isQtyLimitationEnabled()){
@@ -80,12 +80,12 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
         }
 
         $qty = $item->getQty();
-        $offerLimit = $this->offerManager->getOfferLimit($productId);
+        $offerLimit = $this->offerManager->getOfferLimit($product);
 
-        if($item->getProduct()->getTypeId() != 'simple'){
+        if($product->getTypeId() != 'simple'){
 
             // For configurable items we need to check amount of products currently in the cart
-            $qtyAmountInCart = $this->offerManager->getProductQtyInCart($productId, $item->getQuoteId());
+            $qtyAmountInCart = $this->offerManager->getProductQtyInCart($product, $item->getQuoteId());
 
             // We need to decrease quantity by actual product qty
             $itemQtyInCart = $qty - $item->getQtyToAdd();
@@ -95,7 +95,7 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
         }
 
         if(!$offerLimit){
-            $this->messageManager->addNoticeMessage(__('Requested amount of %1 isn\'t available.', $item->getProduct()->getName()));
+            $this->messageManager->addNoticeMessage(__('Requested amount of %1 isn\'t available.', $product->getName()));
             exit();
         }
 
@@ -117,7 +117,7 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
 
         $this->messageManager->addNoticeMessage(__(
             'Requested amount of %1 in special price isn\'t available. %2 item(s) have been added with regular price.',
-            $item->getProduct()->getName(),
+            $product->getName(),
             $qtyLeft
         ));
 
@@ -128,6 +128,8 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
     {
         $infoBuyRequest = $item->getBuyRequest();
 
+        $product = $item->getProduct();
+
         if ($infoBuyRequest) {
             $infoBuyRequest->addData([
                 \MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER => true
@@ -135,13 +137,13 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
 
             $infoBuyRequest->setValue($this->serializer->serialize($infoBuyRequest->getData()));
             $infoBuyRequest->setCode('info_buyRequest');
-            $infoBuyRequest->setProduct($item->getProduct());
+            $infoBuyRequest->setProduct($product);
 
             $item->addOption($infoBuyRequest);
         }
 
         $item->addOption([
-            'product_id' => $item->getProductId(),
+            'product_id' => $product->getId(),
             'code' => \MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER,
             'value' => $this->serializer->serialize(true)
         ]);

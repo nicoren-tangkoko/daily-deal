@@ -46,25 +46,6 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         $this->productHelper = $productHelper;
     }
 
-    public function isOfferEnabled($product)
-    {
-        $product = $this->getProduct($product);
-
-        if(!$product or !$product->getId()){
-            return false;
-        }
-
-        $offerEnabled = (boolean)$product->getDailyDealEnabled();
-
-        if (!$offerEnabled) {
-            return false;
-        }
-
-        $offerTo = $product->getDailyDealTo();
-
-        return $this->dateTime->gmtTimestamp() < strtotime($offerTo);
-    }
-
     public function prepareOfferData($product)
     {
         $isActive = $this->configuration->isActive();
@@ -97,6 +78,25 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return $result;
+    }
+
+    public function isOfferEnabled($product)
+    {
+        $product = $this->getProduct($product);
+
+        if(!$product or !$product->getId()){
+            return false;
+        }
+
+        $offerEnabled = (boolean)$product->getDailyDealEnabled();
+
+        if (!$offerEnabled) {
+            return false;
+        }
+
+        $offerTo = $product->getDailyDealTo();
+
+        return $this->dateTime->gmtTimestamp() < strtotime($offerTo);
     }
 
     public function getPriceAndDiscountWithoutDD($product)

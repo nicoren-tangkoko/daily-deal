@@ -23,15 +23,22 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
      */
     protected $configurableModel;
 
+    /**
+     * @var \Magento\Catalog\Model\ProductRepository
+     */
+    protected $productRepository;
+
     public function __construct(
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resource,
-        \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable $configurableModel
+        \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable $configurableModel,
+        \Magento\Catalog\Model\ProductRepository $productRepository
     )
     {
         $this->productCollectionFactory = $productCollectionFactory;
         $this->resource = $resource;
         $this->configurableModel = $configurableModel;
+        $this->productRepository = $productRepository;
     }
 
     public function getOffersByParameters($timestamp, $storeId)
@@ -39,16 +46,15 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
         $productsCollection = $this->productCollectionFactory->create();
 
         $productsCollection
-            ->addStoreFilter($storeId)
+            ->setStoreId($storeId)
+            ->addAttributeToSelect('daily_deal_limit')
             ->addFieldToFilter([
                 ['attribute' => 'daily_deal_from', '<=' => $timestamp],
                 ['attribute' => 'daily_deal_to', '>=' => $timestamp],
                 ['attribute' => 'daily_deal_enabled', '=' => 1]
             ]);
 
-        $select = $productsCollection->getSelect();
-
-        return $this->resource->getConnection()->fetchAll($select);
+        return $productsCollection->getItems();
     }
 
     public function getItemsByProductId($productId)
@@ -70,62 +76,15 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
         return $this->resource->getConnection()->fetchAssoc($select);
     }
 
-    public function getAttributeValue($productId, $attributeCode, $storeId, $specificStore = false)
+    public function getParentProduct($product)
     {
-        $attributeData = $this->getAttributeDataByCode($attributeCode);
-        $table = 'catalog_product_entity_' . $attributeData['backend_type'];
-
-        $stores = $specificStore ? [$storeId] : [$storeId, self::DEFAULT_STORE_ID];
-
-        $select = $this->resource->getConnection()
-            ->select()
-            ->from(
-                ['c' => $this->resource->getTableName($table)],
-                ['c.store_id', 'c.value']
-            )
-            ->where('c.entity_id = ?', $productId)
-            ->where('c.attribute_id = ?', $attributeData['attribute_id'])
-            ->where('c.store_id IN (?)', $stores);
-
-        $result = $this->resource->getConnection()->fetchAssoc($select);
-
-        foreach($stores as $storeId){
-            if(isset($result[$storeId])){
-                return $result[$storeId]['value'];
-            }
-        }
-
-        return null;
-    }
-
-    public function setAttributeValue($productId, $attributeCode, $value, $storeId)
-    {
-        $storeValue = $this->getAttributeValue($productId, $attributeCode, $storeId, true);
-        $storeId = $storeValue !== null ? $storeId : self::DEFAULT_STORE_ID;
-
-        $attributeData = $this->getAttributeDataByCode($attributeCode);
-        $table = 'catalog_product_entity_' . $attributeData['backend_type'];
-
-        $this->resource->getConnection()->update(
-            $this->resource->getTableName($table),
-            ['value' => $value],
-            [
-                'entity_id = ?' => $productId,
-                'attribute_id = ?' => $attributeData['attribute_id'],
-                'store_id = ?' => $storeId
-            ]
-        );
-    }
-
-    public function getProductParentId($productId)
-    {
-        $productIds = $this->configurableModel->getParentIdsByChild($productId);
+        $productIds = $this->configurableModel->getParentIdsByChild($product->getId());
 
         if(empty($productIds)){
             return false;
         }
 
-        return $productIds[0];
+        return $this->productRepository->getById($productIds[0]);
     }
 
     public function getProductQtyInCart($productId, $quoteId)
@@ -153,25 +112,6 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
         }
 
         return $productQty;
-    }
-
-    private function getAttributeDataByCode($attributeCode)
-    {
-        if(!isset($this->attributes[$attributeCode])){
-
-            $select = $this->resource->getConnection()
-                ->select()
-                ->from(
-                    ['eav' => $this->resource->getTableName('eav_attribute')],
-                    ['eav.attribute_id', 'eav.backend_type']
-                )
-                ->where('eav.entity_type_id = ?', \Magento\Catalog\Setup\CategorySetup::CATALOG_PRODUCT_ENTITY_TYPE_ID)
-                ->where('eav.attribute_code = ?', $attributeCode);
-
-            $this->attributes[$attributeCode] = $this->resource->getConnection()->fetchRow($select);
-        }
-
-        return $this->attributes[$attributeCode];
     }
 
 
