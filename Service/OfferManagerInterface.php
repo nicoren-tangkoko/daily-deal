@@ -16,7 +16,7 @@ interface OfferManagerInterface
 
     public function validateOfferInQuote($product, $qty);
 
-    public function decreaseOfferLimit($product, $qty, $storeId);
+    public function decreaseOfferLimit($product, $qty);
 
     public function getParentProduct($product);
 }

@@ -5,6 +5,6 @@
         <observer name="decrease_offer_limit" instance="MageSuite\DailyDeal\Observer\DecreaseOfferUsage" />
     </event>
     <event name="prepare_catalog_product_index_select">
-        <observer name="update_product_final_price" instance="MageSuite\DailyDeal\Observer\UpdateProductFinalPrice" />
+        <observer name="update_product_final_price" instance="\MageSuite\DailyDeal\Observer\UpdateProductFinalPrice" />
     </event>
 </config>

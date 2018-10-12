@@ -172,9 +172,12 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     public function applyAction($product, $action)
     {
         $product->setDailyDealEnabled($action);
-        $product->getResource()->saveAttribute($product, 'daily_deal_enabled');
 
-        $product->setStoreId($this->storeId)->save();
+        if($product->getExistsStoreValueFlag('daily_deal_enabled')){
+            $product->getResource()->saveAttribute($product, 'daily_deal_enabled');
+        }
+
+        $product->setStoreId(\Magento\Store\Model\Store::DEFAULT_STORE_ID)->save();
 
         if($action == self::TYPE_REMOVE){
             $this->removeProductFromQuotes($product);
@@ -281,10 +284,9 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     /**
      * @param $product
      * @param null $qty
-     * @param int $storeId
      * @return bool
      */
-    public function decreaseOfferLimit($product, $qty = null, $storeId = 0)
+    public function decreaseOfferLimit($product, $qty = null)
     {
         if(!$this->offerData->isOfferEnabled($product)){
             return true;
@@ -301,9 +303,12 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         $newValue = max(0, $currentValue - $qty);
 
         $product->setDailyDealLimit($newValue);
-        $product->getResource()->saveAttribute($product, 'daily_deal_limit');
 
-        $product->setStoreId($storeId)->save();
+        if($product->getExistsStoreValueFlag('daily_deal_limit')){
+            $product->getResource()->saveAttribute($product, 'daily_deal_limit');
+        }
+
+        $product->setStoreId(\Magento\Store\Model\Store::DEFAULT_STORE_ID)->save();
 
         if($newValue == 0){
             $this->applyAction($product, self::TYPE_REMOVE);
