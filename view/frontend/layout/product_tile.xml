@@ -1,0 +1,67 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <body>
+        <referenceBlock name="product.tile.container.badges">
+            <block class="MageSuite\ProductTile\Block\Tile\Container"
+                   name="product.tile.container.badge.el.dailydeal_badge"
+                   before="-">
+                <arguments>
+                    <argument xsi:type="string" name="html_tag">li</argument>
+                    <argument xsi:type="string" name="css_class">cs-grid-product__badge cs-dailydeal__badge-wrapper</argument>
+                </arguments>
+                <block class="MageSuite\ProductTile\Block\Tile\Fragment"
+                       name="product.tile.badge.daily-deal.badge"
+                       template="MageSuite_DailyDeal::product/tile/badge.phtml"
+                >
+                </block>
+            </block>
+
+            <block class="MageSuite\ProductTile\Block\Tile\Container"
+                   name="product.tile.container.badge.el.old_discount"
+                   after="product.tile.container.badge.el.discount">
+                <arguments>
+                    <argument xsi:type="string" name="html_tag">li</argument>
+                    <argument xsi:type="string" name="css_class">cs-grid-product__badge cs-dailydeal__original-discount-badge</argument>
+                </arguments>
+                <block class="MageSuite\ProductTile\Block\Tile\Fragment"
+                       name="product.tile.badge.daily-deal.old-discount"
+                       template="MageSuite_DailyDeal::product/tile/old_discount.phtml"
+                >
+                    <arguments>
+                        <argument xsi:type="string" name="css_class">cs-badge cs-badge--discount cs-badge--discount_old</argument>
+                        <argument xsi:type="string" name="value_prefix">-</argument>
+                        <argument xsi:type="string" name="value_suffix">%</argument>
+                    </arguments>
+                </block>
+            </block>
+        </referenceBlock>
+
+        <referenceBlock name="product.tile.container.figure">
+            <block class="MageSuite\ProductTile\Block\Tile\Fragment"
+                   name="product.tile.daily-deal.counter"
+                   template="MageSuite_DailyDeal::product/tile/counter.phtml"
+                   after="product.tile.container.badges">
+                <arguments>
+                    <argument xsi:type="string" translate="true" name="items_left_label">item(s) left</argument>
+                    <argument xsi:type="array" name="countdown_labels">
+                        <item xsi:type="string" translate="true" name="day">Day</item>
+                        <item xsi:type="string" translate="true" name="days">Days</item>
+                        <item xsi:type="string" translate="true" name="hour">Hour</item>
+                        <item xsi:type="string" translate="true" name="hours">Hours</item>
+                        <item xsi:type="string" translate="true" name="minute">Min</item>
+                        <item xsi:type="string" translate="true" name="minutes">Min</item>
+                        <item xsi:type="string" translate="true" name="second">Sec</item>
+                        <item xsi:type="string" translate="true" name="seconds">Sec</item>
+                    </argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+
+        <referenceBlock name="product.tile.price.wrapper">
+            <block class="MageSuite\ProductTile\Block\Tile\Fragment"
+                   name="product.tile.daily-deal.old-price"
+                   template="MageSuite_DailyDeal::product/tile/old_price.phtml"
+                   after="product.tile.price"
+            />
+        </referenceBlock>
+    </body>
+</page>
