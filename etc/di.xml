@@ -50,5 +50,8 @@
     <type name="Magento\Checkout\Controller\Cart\Index">
         <plugin name="recalculate_cart_on_view" type="MageSuite\DailyDeal\Plugin\RecalculateCartOnCartView" sortOrder="1" />
     </type>
-    
+
+    <type name="MageSuite\ProductTile\Block\Tile\Container">
+        <plugin name="add_daily_deal_container_css_class" type="MageSuite\DailyDeal\Plugin\DailyDealPriceContainerMix" />
+    </type>
 </config>
