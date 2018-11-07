@@ -115,7 +115,7 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
         foreach ($select->getPart(\Magento\Framework\DB\Select::COLUMNS) as $columnEntry) {
             list($correlationName, $column, $alias) = $columnEntry;
 
-            if(in_array($alias, ['price', 'min_price', 'max_price'])){
+            if(in_array($alias, ['price', 'min_price', 'max_price', 'final_price'])){
                 $column = $connection->getIfNullSql($finalPrice, 0);
             }
 
