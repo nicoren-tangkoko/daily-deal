@@ -7,12 +7,18 @@
 ?>
 <?php if ($oldDiscount and $dailyDealData['displayType'] === 'badge_counter'): ?>
     <?php
-        $wrapperTag = $block->getWrapperTag() ? $block->getWrapperTag() : 'li';
-        $wrapperClass = $block->getWrapperCssClass() ? sprintf('class="%s"', $block->getWrapperCssClass()) : '';
+        $wrapperTag = $block->getWrapperTag() ?? 'li';
+
+        $wrapperClass = $block->getWrapperCssClass()
+        $wrapperClass = $wrapperClass ? sprintf('class="%s"', $wrapperClass) : '';
+
         $cssClass = $block->getCssClass();
-        $cssClass = !empty($cssClass) ? sprintf('class="%s"', $cssClass) : '';
-        $label = $block->getLabel();
+        $cssClass = $cssClass ? sprintf('class="%s"', $cssClass) : '';
+
         $badgeTextClass = $block->getTextCssClass() ? sprintf('class="%s"', $block->getTextCssClass()) : '';
+        $badgeTextClass = $badgeTextClass ? sprintf('class="%s"', $badgeTextClass) : '';
+
+        $label = $block->getLabel();
 
         $valuePrefix = $block->getValuePrefix();
         $valueSuffix = $block->getValueSuffix();

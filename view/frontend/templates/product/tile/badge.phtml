@@ -5,12 +5,21 @@ $dailyDealData = $dailyDealHelper->prepareOfferData($block->getProduct());
 ?>
 <?php if($dailyDealData and $dailyDealData['deal'] and in_array($dailyDealData['displayType'], ['badge', 'badge_counter']) && $dailyDealData['items'] && $dailyDealData['items'] > 0): ?>
     <?php
-        $wrapperTag = $block->getWrapperTag() ? $block->getWrapperTag() : 'li';
-        $wrapperClass = $block->getWrapperCssClass() ? sprintf('class="%s"', $block->getWrapperCssClass()) : '';
-        $cssClass = $block->getCssClass() ? sprintf('class="%s"', $block->getCssClass()) : '';
+        $wrapperTag = $block->getWrapperTag() ?? 'li';
+
+        $wrapperClass = $block->getWrapperCssClass()
+        $wrapperClass = $wrapperClass ? sprintf('class="%s"', $wrapperClass) : '';
+
+        $cssClass = $block->getCssClass();
+        $cssClass = $cssClass ? sprintf('class="%s"', $cssClass) : '';
+
         $badgeTextClass = $block->getTextCssClass() ? sprintf('class="%s"', $block->getTextCssClass()) : '';
-        $label = !empty($block->getLabel()) ? $block->getLabel() : __('Limited offer');
-        $amount = $dailyDealData['initialAmount'] && !empty($block->getAmountPresentationFormat()) ? __($block->getAmountPresentationFormat(), $dailyDealData['items'], $dailyDealData['initialAmount']) : '';
+        $badgeTextClass = $badgeTextClass ? sprintf('class="%s"', $badgeTextClass) : '';
+        
+        $label = $block->getLabel() ?? __('Limited offer');
+
+        $amount = $block->getAmountPresentationFormat();
+        $amount = $dailyDealData['initialAmount'] && !empty($amount) ? __($amount, $dailyDealData['items'], $dailyDealData['initialAmount']) : '';
     ?>
     <<?= $wrapperTag ?> <?= $wrapperClass ?> style="display: none">
         <span <?= $cssClass ?>>
