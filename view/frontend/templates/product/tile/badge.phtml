@@ -3,13 +3,18 @@
 $dailyDealHelper = $this->helper('MageSuite\DailyDeal\Helper\OfferData');
 $dailyDealData = $dailyDealHelper->prepareOfferData($block->getProduct());
 ?>
-<?php if($dailyDealData and $dailyDealData['deal'] and in_array($dailyDealData['displayType'], ['badge', 'badge_counter'])): ?>
-    <span class="cs-dailydeal__badge cs-dailydeal__badge--label">
-        <span class="cs-dailydeal__badge-content"><?= __('Limited offer!') ?></span>
-    </span>
-    <?php if ($dailyDealData['items'] && $dailyDealData['items'] > 0): ?>
-        <span class="cs-dailydeal__badge">
-            <span class="cs-dailydeal__badge-content"><?= __('%1 item(s) left', $dailyDealData['items']) ?></span>
+<?php if($dailyDealData and $dailyDealData['deal'] and in_array($dailyDealData['displayType'], ['badge', 'badge_counter']) && $dailyDealData['items'] && $dailyDealData['items'] > 0): ?>
+    <?php
+        $wrapperTag = $block->getWrapperTag() ? $block->getWrapperTag() : 'li';
+        $wrapperClass = $block->getWrapperCssClass() ? sprintf('class="%s"', $block->getWrapperCssClass()) : '';
+        $cssClass = $block->getCssClass() ? sprintf('class="%s"', $block->getCssClass()) : '';
+        $badgeTextClass = $block->getTextCssClass() ? sprintf('class="%s"', $block->getTextCssClass()) : '';
+        $label = !empty($block->getLabel()) ? $block->getLabel() : __('Limited offer');
+        $amount = $dailyDealData['initialAmount'] && !empty($block->getAmountPresentationFormat()) ? __($block->getAmountPresentationFormat(), $dailyDealData['items'], $dailyDealData['initialAmount']) : '';
+    ?>
+    <<?= $wrapperTag ?> <?= $wrapperClass ?> style="display: none">
+        <span <?= $cssClass ?>>
+            <span <?= $badgeTextClass ?>><?= $label ?> <span><?= $amount ?></span></span>
         </span>
-    <?php endif; ?>
+    </<?= $wrapperTag ?>>
 <?php endif; ?>

@@ -4,15 +4,22 @@
     $dailyDealData = $dailyDealHelper->prepareOfferData($block->getProduct());
 
     $oldDiscount = $dailyDealData && $dailyDealData['deal'] ? $dailyDealData['oldDiscount'] : '';
-
-    $cssClass = $block->getCssClass();
-    $cssClass = !empty($cssClass) ? sprintf('class="%s"', $cssClass) : '';
-
-    $valuePrefix = $block->getValuePrefix();
-    $valueSuffix = $block->getValueSuffix();
 ?>
 <?php if ($oldDiscount and $dailyDealData['displayType'] === 'badge_counter'): ?>
-    <span <?= $cssClass ?>>
-        <span class="cs-badge__span"><?= $valuePrefix ?><?= $oldDiscount ?><?= $valueSuffix ?></span>
-    </span>
+    <?php
+        $wrapperTag = $block->getWrapperTag() ? $block->getWrapperTag() : 'li';
+        $wrapperClass = $block->getWrapperCssClass() ? sprintf('class="%s"', $block->getWrapperCssClass()) : '';
+        $cssClass = $block->getCssClass();
+        $cssClass = !empty($cssClass) ? sprintf('class="%s"', $cssClass) : '';
+        $label = $block->getLabel();
+        $badgeTextClass = $block->getTextCssClass() ? sprintf('class="%s"', $block->getTextCssClass()) : '';
+
+        $valuePrefix = $block->getValuePrefix();
+        $valueSuffix = $block->getValueSuffix();
+    ?>
+    <<?= $wrapperTag ?> <?= $wrapperClass ?> style="display: none">
+        <span <?= $cssClass ?>>
+            <span <?= $badgeTextClass ?>><?= $label ?> <span><?= $valuePrefix ?><?= $oldDiscount ?><?= $valueSuffix ?></span></span>
+        </span>
+    </<?= $wrapperTag ?>>
 <?php endif; ?>
