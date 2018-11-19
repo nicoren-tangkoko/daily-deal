@@ -9,13 +9,13 @@
     <?php
         $wrapperTag = $block->getWrapperTag() ?? 'li';
 
-        $wrapperClass = $block->getWrapperCssClass()
+        $wrapperClass = $block->getWrapperCssClass();
         $wrapperClass = $wrapperClass ? sprintf('class="%s"', $wrapperClass) : '';
 
         $cssClass = $block->getCssClass();
         $cssClass = $cssClass ? sprintf('class="%s"', $cssClass) : '';
 
-        $badgeTextClass = $block->getTextCssClass() ? sprintf('class="%s"', $block->getTextCssClass()) : '';
+        $badgeTextClass = $block->getTextCssClass();
         $badgeTextClass = $badgeTextClass ? sprintf('class="%s"', $badgeTextClass) : '';
 
         $label = $block->getLabel();
