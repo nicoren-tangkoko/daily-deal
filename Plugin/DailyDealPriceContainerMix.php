@@ -24,7 +24,7 @@ class DailyDealPriceContainerMix
             $dailyDealData = $this->offerDataHelper->prepareOfferData($subject->getProduct());
 
             if($dailyDealData && $dailyDealData['deal'] && $dailyDealData['displayType'] === 'badge_counter') {
-                $result .= ' cs-grid-product__price--dailydeal-countdown';
+                $result .= ' cs-product-tile__price--dailydeal-countdown';
             }
         }
 
