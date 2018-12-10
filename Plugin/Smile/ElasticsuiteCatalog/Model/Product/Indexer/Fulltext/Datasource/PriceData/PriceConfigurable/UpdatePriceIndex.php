@@ -4,7 +4,7 @@ namespace MageSuite\DailyDeal\Plugin\Smile\ElasticsuiteCatalog\Model\Product\Ind
 
 class UpdatePriceIndex
 {
-    protected $price = null;
+    protected $productPrices = [];
 
     /**
      * @var \MageSuite\DailyDeal\Service\OfferManager
@@ -40,11 +40,11 @@ class UpdatePriceIndex
 
     protected function getProductPrice($productId)
     {
-        if (!$this->price) {
+        if (!isset($this->productPrices[$productId])) {
             $product = $this->productRepository->getById($productId);
-            $this->price = $this->offerManager->getOfferPrice($product);
+            $this->productPrices[$productId] = $this->offerManager->getOfferPrice($product);
         }
 
-        return $this->price;
+        return $this->productPrices[$productId];
     }
 }
