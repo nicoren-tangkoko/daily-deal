@@ -52,4 +52,15 @@
         <plugin name="add_daily_deal_container_css_class" type="MageSuite\DailyDeal\Plugin\DailyDealPriceContainerMix" />
     </type>
 
+    <type name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\AttributeConfig">
+        <arguments>
+            <argument name="additionalSelectedAttributes" xsi:type="array">
+                <item name="daily_deal_enabled" xsi:type="string">daily_deal_enabled</item>
+                <item name="daily_deal_price" xsi:type="string">daily_deal_price</item>
+                <item name="daily_deal_from" xsi:type="string">daily_deal_from</item>
+                <item name="daily_deal_to" xsi:type="string">daily_deal_to</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

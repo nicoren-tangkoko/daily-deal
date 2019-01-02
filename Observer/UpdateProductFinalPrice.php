@@ -18,6 +18,8 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
 
     private $storeField;
 
+    protected $finalPriceColumnExists = true;
+
     public function __construct(
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
         \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager,
@@ -97,25 +99,41 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
 
     private function getPriceColumn($select)
     {
+        $priceColumn = null;
+
         foreach ($select->getPart(\Magento\Framework\DB\Select::COLUMNS) as $columnEntry) {
             list($correlationName, $column, $alias) = $columnEntry;
 
             if($alias == 'final_price'){
                 return $column;
             }
+
+            if($alias == 'price'){
+                $priceColumn = $column;
+            }
         }
 
-        return null;
+        if($priceColumn){
+            $this->finalPriceColumnExists = false;
+        }
+
+        return $priceColumn;
     }
 
     private function applyFinalPriceToSelect($connection, $select, $finalPrice)
     {
         $columns = [];
 
+        $columnFields = ['min_price', 'max_price', 'final_price'];
+
+        if(!$this->finalPriceColumnExists){
+            $columnFields[] ='price';
+        }
+
         foreach ($select->getPart(\Magento\Framework\DB\Select::COLUMNS) as $columnEntry) {
             list($correlationName, $column, $alias) = $columnEntry;
 
-            if(in_array($alias, ['min_price', 'max_price', 'final_price'])){
+            if(in_array($alias, $columnFields)){
                 $column = $connection->getIfNullSql($finalPrice, 0);
             }
 
