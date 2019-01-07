@@ -139,7 +139,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         $offerLimit = $product->getDailyDealLimit();
         $quantityAndStockStatus = $product->getQuantityAndStockStatus();
 
-        if(!$quantityAndStockStatus){
+        if(!$quantityAndStockStatus or $product->getTypeId() === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE){
             return $offerLimit;
         }
 
