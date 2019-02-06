@@ -36,20 +36,12 @@
         <referenceBlock name="product.tile.container.figure">
             <block class="MageSuite\ProductTile\Block\Tile\Fragment"
                    name="product.tile.daily-deal.counter"
-                   template="MageSuite_DailyDeal::product/tile/counter.phtml"
+                   template="MageSuite_DailyDeal::counter.phtml"
                    after="product.tile.container.badges">
                 <arguments>
-                    <argument xsi:type="string" translate="true" name="items_left_label"></argument>
-                    <argument xsi:type="array" name="countdown_labels">
-                        <item xsi:type="string" translate="true" name="day">Day</item>
-                        <item xsi:type="string" translate="true" name="days">Days</item>
-                        <item xsi:type="string" translate="true" name="hour">Hour</item>
-                        <item xsi:type="string" translate="true" name="hours">Hours</item>
-                        <item xsi:type="string" translate="true" name="minute">Min</item>
-                        <item xsi:type="string" translate="true" name="minutes">Min</item>
-                        <item xsi:type="string" translate="true" name="second">Sec</item>
-                        <item xsi:type="string" translate="true" name="seconds">Sec</item>
-                    </argument>
+                    <argument xsi:type="string" name="additional_css_classes">cs-dailydeal--tile</argument>
+                    <argument xsi:type="boolean" name="show_header">true</argument>
+                    <argument xsi:type="string" translate="true" name="availability_text_after">items left</argument>
                 </arguments>
             </block>
         </referenceBlock>

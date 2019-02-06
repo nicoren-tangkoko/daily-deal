@@ -1,9 +1,22 @@
 <?xml version="1.0"?>
-
-<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="product.info.main">
-            <block class="MageSuite\DailyDeal\Block\Product" name="daily_deal_pdp" template="MageSuite_DailyDeal::/product.phtml" after="product.info.price"/>
+            <container name="product.info.main.dailydeal" htmlTag="div" htmlClass="cs-buybox__daily-deal">
+                <block class="MageSuite\DailyDeal\Block\Product" 
+                       name="daily_deal_pdp" 
+                       template="MageSuite_DailyDeal::/counter.phtml">
+                    <arguments>
+                        <argument xsi:type="boolean" name="show_header">true</argument>
+                        <argument xsi:type="string" translate="true" name="header_title">Limited time offer</argument>
+                        <argument xsi:type="string" translate="true" name="availability_text_after">items left</argument>
+                    </arguments>
+                </block>
+            </container>
+        </referenceContainer>
+
+        <referenceContainer name="product.info.price" htmlClass="product-info-price cs-buybox__price">
+            <block class="MageSuite\DailyDeal\Block\Product" name="product.info.price.dailydeal" template="MageSuite_DailyDeal::product/view/price-dailydeal.phtml" after="product.price.final" />
         </referenceContainer>
     </body>
 </page>
