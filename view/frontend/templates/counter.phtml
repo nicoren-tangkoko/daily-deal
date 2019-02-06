@@ -1,0 +1,31 @@
+<?php
+    /** @var \MageSuite\DailyDeal\Helper\OfferData $dailyDealHelper */
+    $dailyDealHelper = $this->helper('MageSuite\DailyDeal\Helper\OfferData');
+    $dailyDealData = $dailyDealHelper->prepareOfferData($block->getProduct());
+?>
+<?php if($dailyDealData and $dailyDealData['deal'] and $dailyDealData['displayType'] == 'badge_counter'): ?>
+    <?php $headerLabel = $block->getItemsLeftLabel(); ?>
+    <div class="cs-dailydeal <?= $block->getAdditionalCssClasses() ?>">
+        <?= $block->getChildHtml('hotspot.before.header') ?>
+        <?php if ($dailyDealData['items'] and $block->getShowHeader()): ?>
+            <?php
+                $headerTitle = $block->getHeaderTitle();
+            ?>
+            <div class="cs-dailydeal__header">
+                <?php if(isset($headerTitle) and !empty($headerTitle)): ?>
+                    <p class="cs-dailydeal__title"><?= $headerTitle ?></p>
+                <?php endif; ?>
+                <div class="cs-dailydeal__availability">
+                    <?= $block->getAvailabilityTextBefore() ?>
+                    <span class="cs-dailydeal__items-amount" data-dailydeal-items="<?= $dailyDealData['items'] ?>">
+                        <?= $dailyDealData['items'] ?> 
+                    </span> 
+                    <?= $block->getAvailabilityTextAfter() ?>
+                </div>
+            </div>
+        <?php endif; ?>
+        <?= $block->getChildHtml('hotspot.before.countdown') ?>
+        <div class="cs-dailydeal__countdown" data-dailydeal-end="<?= $dailyDealData['to'] ?>"></div>
+        <?= $block->getChildHtml('hotspot.after.countdown') ?>
+    </div>
+<?php endif; ?>
