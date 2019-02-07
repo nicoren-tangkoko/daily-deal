@@ -143,7 +143,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
                 return self::TYPE_REMOVE;
             }
 
-            if($isQtyLimitationEnabled and $offerData['daily_deal_limit'] !== null and (float)$offerData['daily_deal_limit'] == 0){
+            if($isQtyLimitationEnabled and isset($offerData['daily_deal_limit']) and $offerData['daily_deal_limit'] !== null and (float)$offerData['daily_deal_limit'] == 0){
                 return self::TYPE_REMOVE;
             }
 
@@ -157,7 +157,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
                 return null;
             }
 
-            if($isQtyLimitationEnabled and $offerData['daily_deal_limit'] !== null and (float)$offerData['daily_deal_limit'] == 0){
+            if($isQtyLimitationEnabled and isset($offerData['daily_deal_limit']) and $offerData['daily_deal_limit'] !== null and (float)$offerData['daily_deal_limit'] == 0){
                 return null;
             }
 

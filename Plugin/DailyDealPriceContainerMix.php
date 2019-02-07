@@ -21,7 +21,13 @@ class DailyDealPriceContainerMix
         $result = $proceed($key, $index);
 
         if($nameInLayout == 'product.tile.price.wrapper' and $key = 'css_class') {
-            $dailyDealData = $this->offerDataHelper->prepareOfferData($subject->getProduct());
+            $product = $subject->getProduct();
+
+            if(!$product) {
+                return $result;
+            }
+
+            $dailyDealData = $this->offerDataHelper->prepareOfferData($product);
 
             if($dailyDealData && $dailyDealData['deal'] && $dailyDealData['displayType'] === 'badge_counter') {
                 $result .= ' cs-product-tile__price--dailydeal-countdown';
