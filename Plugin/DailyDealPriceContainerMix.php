@@ -20,7 +20,7 @@ class DailyDealPriceContainerMix
 
         $result = $proceed($key, $index);
 
-        if($nameInLayout == 'product.tile.price.wrapper' and $key = 'css_class') {
+        if($nameInLayout == 'product.tile.price.wrapper' and $key == 'css_class') {
             $product = $subject->getProduct();
 
             if(!$product) {
