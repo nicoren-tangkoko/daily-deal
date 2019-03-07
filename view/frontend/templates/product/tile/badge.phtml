@@ -3,12 +3,14 @@
 $dailyDealHelper = $this->helper('MageSuite\DailyDeal\Helper\OfferData');
 $dailyDealData = $dailyDealHelper->prepareOfferData($block->getProduct());
 ?>
-<?php if($dailyDealData and $dailyDealData['deal'] and in_array($dailyDealData['displayType'], ['badge', 'badge_counter']) && $dailyDealData['items'] && $dailyDealData['items'] > 0): ?>
+<?php if ($dailyDealData and $dailyDealData['deal'] and in_array($dailyDealData['displayType'], ['badge', 'badge_counter']) && $dailyDealData['items'] && $dailyDealData['items'] > 0): ?>
     <?php
         $wrapperTag = $block->getWrapperTag() ?? 'li';
 
         $wrapperClass = $block->getWrapperCssClass();
         $wrapperClass = $wrapperClass ? sprintf('class="%s"', $wrapperClass) : '';
+        // Don't hide badge by default if it is a compact scenario without counter.
+        $wrapperStyle = $dailyDealData['displayType'] === 'badge' ? '' : 'style="display: none"';
 
         $cssClass = $block->getCssClass();
         $cssClass = $cssClass ? sprintf('class="%s"', $cssClass) : '';
@@ -21,7 +23,7 @@ $dailyDealData = $dailyDealHelper->prepareOfferData($block->getProduct());
         $amount = $block->getAmountPresentationFormat();
         $amount = $dailyDealData['initialAmount'] && !empty($amount) ? __($amount, $dailyDealData['items'], $dailyDealData['initialAmount']) : '';
     ?>
-    <<?= $wrapperTag ?> <?= $wrapperClass ?> style="display: none">
+    <<?= $wrapperTag ?> <?= $wrapperClass ?> <?= $wrapperStyle ?>>
         <span <?= $cssClass ?>>
             <span <?= $badgeTextClass ?>><?= $label ?> <span><?= $amount ?></span></span>
         </span>
