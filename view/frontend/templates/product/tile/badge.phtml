@@ -25,7 +25,12 @@ $dailyDealData = $dailyDealHelper->prepareOfferData($block->getProduct());
     ?>
     <<?= $wrapperTag ?> <?= $wrapperClass ?> <?= $wrapperStyle ?>>
         <span <?= $cssClass ?>>
-            <span <?= $badgeTextClass ?>><?= $label ?> <span><?= $amount ?></span></span>
+        <?php if ($label): ?>
+            <span <?= $badgeTextClass ?>><?= $label ?></span>
+        <?php endif; ?>
+        <?php if ($amount): ?>
+            <span <?= $badgeTextClass ?>><?= $amount ?></span>
+        <?php endif; ?>
         </span>
     </<?= $wrapperTag ?>>
 <?php endif; ?>
