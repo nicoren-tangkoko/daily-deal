@@ -48,7 +48,7 @@
             </block>
         </referenceBlock>
 
-        <referenceBlock name="product.tile.container.figure">
+        <referenceBlock name="product.tile.container.thumbnail.link">
             <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.dailydeal.counter.grid" template="MageSuite_DailyDeal::counter.phtml" after="product.tile.container.badges.grid">
                 <arguments>
                     <argument xsi:type="string" name="additional_css_classes">cs-product-tile__dailydeal cs-product-tile__dailydeal--grid cs-dailydeal--tile</argument>
@@ -59,7 +59,7 @@
         </referenceBlock>
 
         <referenceBlock name="product.tile.additional.wrapper.list">
-            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.dailydeal.counter.list" template="MageSuite_DailyDeal::counter.phtml" after="product.tile.addtolinks.list.wrapper">
+            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.dailydeal.counter.list" template="MageSuite_DailyDeal::counter.phtml" after="product.tile.addtolinks.wrapper.list">
                 <arguments>
                     <argument xsi:type="string" name="additional_css_classes">cs-product-tile__dailydeal cs-product-tile__dailydeal--list cs-dailydeal--tile</argument>
                     <argument xsi:type="boolean" name="show_header">true</argument>
