@@ -15,7 +15,7 @@
                 <arguments>
                     <argument xsi:type="string" name="wrapper_tag">li</argument>
                     <argument xsi:type="string" name="wrapper_css_class">cs-product-tile__badge-item cs-dailydeal__badge cs-dailydeal__badge--dd-discount</argument>
-                    <argument xsi:type="string" name="css_class">cs-product-tile__badge cs-product-tile__badge--dailydeal</argument>
+                    <argument xsi:type="string" name="css_class">cs-product-tile__badge cs-product-tile__badge--discount</argument>
                     <argument xsi:type="string" name="text_css_class">cs-product-tile__badge-text</argument>
                     <argument xsi:type="string" name="label" translate="true"></argument>
                     <argument xsi:type="string" name="value_prefix">-</argument>
@@ -39,7 +39,7 @@
                 <arguments>
                     <argument xsi:type="string" name="wrapper_tag">li</argument>
                     <argument xsi:type="string" name="wrapper_css_class">cs-product-tile__badge-item cs-dailydeal__badge cs-dailydeal__badge--dd-discount</argument>
-                    <argument xsi:type="string" name="css_class">cs-product-tile__badge cs-product-tile__badge--dailydeal</argument>
+                    <argument xsi:type="string" name="css_class">cs-product-tile__badge cs-product-tile__badge--discount</argument>
                     <argument xsi:type="string" name="text_css_class">cs-product-tile__badge-text</argument>
                     <argument xsi:type="string" name="label" translate="true"></argument>
                     <argument xsi:type="string" name="value_prefix">-</argument>
