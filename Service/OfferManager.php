@@ -11,6 +11,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
     private $timestamp;
     private $storeId;
+    private $productsQuantities = [];
 
     /**
      * @var \Magento\Quote\Api\CartRepositoryInterface
@@ -58,9 +59,9 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     protected $indexerFactory;
 
     /**
-     * @var \Magento\CatalogInventory\Api\StockStateInterface
+     * @var \MageSuite\Frontend\Helper\Product\Stock
      */
-    protected $stockInterface;
+    protected $stockHelper;
 
     public function __construct(
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
@@ -72,7 +73,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         \MageSuite\DailyDeal\Model\ResourceModel\Offer $offerResource,
         \MageSuite\DailyDeal\Service\CacheCleaner $cacheCleaner,
         \Magento\Indexer\Model\IndexerFactory $indexerFactory,
-        \Magento\CatalogInventory\Api\StockStateInterface $stockInterface
+        \MageSuite\Frontend\Helper\Product\Stock $stockHelper
     )
     {
         $this->quoteRepository = $quoteRepository;
@@ -84,7 +85,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         $this->offerResource = $offerResource;
         $this->cacheCleaner = $cacheCleaner;
         $this->indexerFactory = $indexerFactory;
-        $this->stockInterface = $stockInterface;
+        $this->stockHelper = $stockHelper;
     }
 
     public function refreshOffers($storeId = null)
@@ -96,6 +97,8 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         if(empty($offers)){
             return false;
         }
+
+        $this->getProductsQuantities(array_keys($offers));
 
         $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
 
@@ -127,7 +130,11 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
         $from = $offerData['daily_deal_from'] ? strtotime($offerData['daily_deal_from']) : null;
         $to = $offerData['daily_deal_to'] ? strtotime($offerData['daily_deal_to']) : null;
-        $productQty = $offer->getTypeId() == \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE ? $this->stockInterface->getStockQty($offerData['entity_id']) : null;
+
+        $productQty = null;
+        if($offer->getTypeId() == \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE && isset($this->productsQuantities[$offerData['entity_id']])){
+            $productQty = $this->productsQuantities[$offerData['entity_id']];
+        }
 
         if($offerData['daily_deal_enabled']){
 
@@ -332,4 +339,16 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
             : $this->storeManager->getStore()->getId();
     }
 
+    private function getProductsQuantities($productIds)
+    {
+        $return = [];
+
+        $stockStatuses = $this->stockHelper->getStockStatuses($productIds);
+
+        foreach ($stockStatuses AS $productId => $stock) {
+            $return[$productId] = $stock->getQty();
+        }
+
+        $this->productsQuantities = $return;
+    }
 }

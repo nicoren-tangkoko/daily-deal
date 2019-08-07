@@ -43,18 +43,44 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
 
     public function getOffersByParameters($timestamp, $storeId)
     {
+        $currentDateFilter = date('Y-m-d H:i:s', $timestamp);
+
         $productsCollection = $this->productCollectionFactory->create();
 
         $productsCollection
             ->setStoreId($storeId)
             ->addAttributeToSelect('daily_deal_limit')
-            ->addFieldToFilter([
-                ['attribute' => 'daily_deal_from', '<=' => $timestamp],
-                ['attribute' => 'daily_deal_to', '>=' => $timestamp],
-                ['attribute' => 'daily_deal_enabled', '=' => 1]
-            ]);
+            ->addFieldToFilter('daily_deal_from', ['lt' => $currentDateFilter])
+            ->addFieldToFilter('daily_deal_to', ['gt' => $currentDateFilter])
+            ->addFieldToFilter('daily_deal_enabled', ['eq' => 0]);
+
+        $productsCollection = $this->addDailyDealEnabledCondition($productsCollection);
 
         return $productsCollection->getItems();
+    }
+
+    private function addDailyDealEnabledCondition(\Magento\Catalog\Model\ResourceModel\Product\Collection $productsCollection)
+    {
+        $select = $productsCollection->getSelect();
+
+        foreach ($select->getPart(\Magento\Framework\DB\Select::COLUMNS) as $columnEntry) {
+            list($correlationName, $column, $alias) = $columnEntry;
+
+            if ($alias == 'daily_deal_enabled') {
+                if ($column instanceof \Zend_Db_Expr) {
+                    $productsCollection->getSelect()->orWhere("{$column} = ?", 1);
+                    return $productsCollection;
+                } else {
+                    $field = sprintf('%s.%s', $correlationName, $column);
+                    $condition = $select->getConnection()->prepareSqlCondition($field, ['eq' => 1]);
+
+                    $productsCollection->getSelect()->orWhere($condition);
+                    return $productsCollection;
+                }
+            }
+        }
+
+        return $productsCollection;
     }
 
     public function getItemsByProductId($productId)
