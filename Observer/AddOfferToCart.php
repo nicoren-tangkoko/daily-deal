@@ -53,9 +53,7 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        $isActive = $this->configuration->isActive();
-
-        if(!$isActive){
+        if(!$this->configuration->isActive()){
             return $this;
         }
 

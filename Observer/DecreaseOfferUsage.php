@@ -24,6 +24,10 @@ class DecreaseOfferUsage implements \Magento\Framework\Event\ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
+        if(!$this->configuration->isActive()){
+            return $this;
+        }
+
         $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
 
         if(!$isQtyLimitationEnabled){

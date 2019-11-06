@@ -33,10 +33,7 @@ class UpdateOfferInCart
 
     public function beforeUpdateItems(\Magento\Checkout\Model\Cart $subject, $data)
     {
-        $isActive = $this->configuration->isActive();
-        $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
-
-        if(!$isActive or !$isQtyLimitationEnabled){
+        if(!$this->configuration->isActive() or !$this->configuration->isQtyLimitationEnabled()){
             return [$data];
         }
 

@@ -5,13 +5,21 @@ namespace MageSuite\DailyDeal\Plugin;
 class RecalculateCartOnCartView
 {
     /**
+     * @var \MageSuite\DailyDeal\Helper\Configuration
+     */
+    protected $configuration;
+    /**
      * @var \Magento\Checkout\Model\Cart
      */
     private $cart;
 
-    public function __construct(\Magento\Checkout\Model\Cart $cart)
+    public function __construct(
+        \Magento\Checkout\Model\Cart $cart,
+        \MageSuite\DailyDeal\Helper\Configuration $configuration
+    )
     {
         $this->cart = $cart;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -19,7 +27,12 @@ class RecalculateCartOnCartView
      * @param \Magento\Checkout\Controller\Cart\Index $subject
      * @return null
      */
-    public function beforeExecute(\Magento\Checkout\Controller\Cart\Index $subject) {
+    public function beforeExecute(\Magento\Checkout\Controller\Cart\Index $subject)
+    {
+        if(!$this->configuration->isActive()){
+            return null;
+        }
+
         $this->cart->save();
 
         return null;

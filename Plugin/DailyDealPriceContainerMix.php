@@ -8,17 +8,29 @@ class DailyDealPriceContainerMix
      * @var \MageSuite\DailyDeal\Helper\OfferData
      */
     protected $offerDataHelper;
+    /**
+     * @var \MageSuite\DailyDeal\Helper\Configuration
+     */
+    protected $configuration;
 
-    public function __construct(\MageSuite\DailyDeal\Helper\OfferData $offerDataHelper)
+    public function __construct(
+        \MageSuite\DailyDeal\Helper\OfferData $offerDataHelper,
+        \MageSuite\DailyDeal\Helper\Configuration $configuration
+    )
     {
         $this->offerDataHelper = $offerDataHelper;
+        $this->configuration = $configuration;
     }
 
-    public function aroundGetData(\MageSuite\ProductTile\Block\Tile\Container $subject, callable $proceed, $key, $index = '') {
+    public function aroundGetData(\MageSuite\ProductTile\Block\Tile\Container $subject, callable $proceed, $key, $index = '')
+    {
+        $result = $proceed($key, $index);
+
+        if(!$this->configuration->isActive()){
+            return $result;
+        }
 
         $nameInLayout = $subject->getNameInLayout();
-
-        $result = $proceed($key, $index);
 
         if(($nameInLayout == 'product.tile.price.wrapper.grid' || $nameInLayout == 'product.tile.price.wrapper.list') and $key == 'css_class') {
             $product = $subject->getProduct();
