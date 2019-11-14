@@ -39,9 +39,7 @@ class VerifyOfferInCheckout
 
     public function aroundPlaceOrder($subject, $proceed, $cartId, $paymentMethod = null)
     {
-        $isActive = $this->configuration->isActive();
-
-        if(!$isActive){
+        if(!$this->configuration->isActive()){
             return $proceed($cartId, $paymentMethod);
         }
 

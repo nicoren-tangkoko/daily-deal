@@ -13,25 +13,35 @@ class ValidateOfferLimitValue implements \Magento\Framework\Event\ObserverInterf
      * @var \Magento\Framework\Config\ScopeInterface
      */
     protected $scope;
-
     /**
      * @var \Magento\Framework\Message\ManagerInterface
      */
-    private $messageManager;
+    protected $messageManager;
+
+    /**
+     * @var \MageSuite\DailyDeal\Helper\Configuration
+     */
+    protected $configuration;
 
     public function __construct(
         \Magento\Catalog\Model\ResourceModel\Product\Action $productResourceAction,
         \Magento\Framework\Config\ScopeInterface $scope,
-        \Magento\Framework\Message\ManagerInterface $messageManager
+        \Magento\Framework\Message\ManagerInterface $messageManager,
+        \MageSuite\DailyDeal\Helper\Configuration $configuration
     )
     {
         $this->productResourceAction = $productResourceAction;
         $this->scope = $scope;
         $this->messageManager = $messageManager;
+        $this->configuration = $configuration;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
+        if(!$this->configuration->isActive()){
+            return $this;
+        }
+
         $product = $observer->getEvent()->getProduct();
 
         if($product->getTypeId() != 'simple'){
