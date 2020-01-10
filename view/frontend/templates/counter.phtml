@@ -2,9 +2,12 @@
     /** @var \MageSuite\DailyDeal\Helper\OfferData $dailyDealHelper */
     $dailyDealHelper = $this->helper('MageSuite\DailyDeal\Helper\OfferData');
     $dailyDealData = $dailyDealHelper->prepareOfferData($block->getProduct());
+    $dailyDealCounterPlace = $block->getCounterPlace() ? $block->getCounterPlace() : 'pdp';
 ?>
-<?php if($dailyDealData and $dailyDealData['deal'] and $dailyDealData['displayType'] == 'badge_counter'): ?>
-    <?php $headerLabel = $block->getItemsLeftLabel(); ?>
+<?php
+    if ($dailyDealData and $dailyDealData['deal'] and ($dailyDealCounterPlace === 'pdp' or ($dailyDealCounterPlace === 'tile' and $dailyDealData['displayType'] === 'badge_counter'))): 
+    $headerLabel = $block->getItemsLeftLabel();
+?>
     <div class="cs-dailydeal <?= $block->getAdditionalCssClasses() ?>">
         <?= $block->getChildHtml('hotspot.before.header') ?>
         <?php if ($dailyDealData['items'] and $block->getShowHeader()): ?>
