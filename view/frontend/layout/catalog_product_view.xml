@@ -7,6 +7,8 @@
                        name="daily_deal_pdp" 
                        template="MageSuite_DailyDeal::/counter.phtml">
                     <arguments>
+                    <argument xsi:type="string" name="counter_place">pdp</argument>
+                    <argument xsi:type="string" name="additional_css_classes">cs-dailydeal--pdp</argument>
                         <argument xsi:type="boolean" name="show_header">true</argument>
                         <argument xsi:type="string" translate="true" name="header_title">Limited time offer</argument>
                         <argument xsi:type="string" translate="true" name="availability_text_after">items left</argument>
