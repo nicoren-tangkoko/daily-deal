@@ -10,6 +10,8 @@
                     <argument xsi:type="string" name="counter_place">pdp</argument>
                     <argument xsi:type="string" name="additional_css_classes">cs-dailydeal--pdp</argument>
                         <argument xsi:type="boolean" name="show_header">true</argument>
+                        <argument xsi:type="string" name="additional_css_classes">cs-dailydeal--buybox</argument>
+                        <argument xsi:type="string" name="modifier_for_qty_limitation">cs-dailydeal--has-qty-limit</argument>
                         <argument xsi:type="string" translate="true" name="header_title">Limited time offer</argument>
                         <argument xsi:type="string" translate="true" name="availability_text_after">items left</argument>
                     </arguments>
