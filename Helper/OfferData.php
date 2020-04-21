@@ -73,6 +73,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         ];
 
         if($result['deal']){
+            $result['dailyDiscount'] = $this->productHelper->getSalePercentage($product);
             $priceAndDiscountWithoutDD = $this->getPriceAndDiscountWithoutDD($product);
             $result = array_merge($result, $priceAndDiscountWithoutDD);
         }
