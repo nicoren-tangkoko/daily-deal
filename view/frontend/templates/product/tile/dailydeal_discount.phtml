@@ -3,9 +3,9 @@
     $dailyDealHelper = $this->helper('MageSuite\DailyDeal\Helper\OfferData');
     $dailyDealData = $dailyDealHelper->prepareOfferData($block->getProduct());
 
-    $oldDiscount = $dailyDealData && $dailyDealData['deal'] ? $dailyDealData['oldDiscount'] : '';
+    $dailyDealDiscount = $dailyDealData && $dailyDealData['deal'] ? $dailyDealData['dailyDiscount'] : '';
 ?>
-<?php if ($oldDiscount and $dailyDealData['displayType'] === 'badge_counter'): ?>
+<?php if ($dailyDealDiscount and $dailyDealData['displayType'] === 'badge_counter'): ?>
     <?php
         $wrapperTag = $block->getWrapperTag() ?? 'li';
 
@@ -22,10 +22,13 @@
 
         $valuePrefix = $block->getValuePrefix();
         $valueSuffix = $block->getValueSuffix();
+
+        $showNumericValue = $block->getShowNumericValue();
+        $showNumericValue = $showNumericValue ? $dailyDealDiscount : '';
     ?>
     <<?= $wrapperTag ?> <?= $wrapperClass ?> style="display: none">
         <span <?= $cssClass ?>>
-            <span <?= $badgeTextClass ?>><?= $label ?> <span><?= $valuePrefix ?><?= $oldDiscount ?><?= $valueSuffix ?></span></span>
+            <span <?= $badgeTextClass ?>><?= $label ?> <span><?= $valuePrefix ?><?= $showNumericValue ?><?= $valueSuffix ?></span></span>
         </span>
     </<?= $wrapperTag ?>>
 <?php endif; ?>
