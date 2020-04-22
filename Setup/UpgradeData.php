@@ -46,6 +46,10 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
         if (version_compare($context->getVersion(), '0.0.4', '<')) {
             $this->upgradeToVersion004();
         }
+
+        if (version_compare($context->getVersion(), '1.0.1', '<')) {
+            $this->upgradeToVersion101();
+        }
     }
 
     protected function upgradeToVersion002()
@@ -90,5 +94,11 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
                 ]
             );
         }
+    }
+
+    protected function upgradeToVersion101()
+    {
+        $entityType = $this->eavSetup->getEntityTypeId('catalog_product');
+        $this->eavSetup->updateAttribute($entityType, 'daily_deal_enabled', 'note', 'Daily deal currently works only for simple products.');
     }
 }

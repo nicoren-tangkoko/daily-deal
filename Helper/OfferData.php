@@ -89,6 +89,10 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             return false;
         }
 
+        if ($product->getTypeId() !== \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE) {
+            return false;
+        }
+
         $offerEnabled = (boolean)$product->getDailyDealEnabled();
 
         if (!$offerEnabled) {
