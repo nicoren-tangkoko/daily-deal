@@ -3,7 +3,7 @@
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-
+$productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
 $product = $objectManager->create('Magento\Catalog\Model\Product');
 
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
@@ -148,3 +148,90 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setDailyDealTo('2035-03-25 08:00:00')
     ->setDailyDealPrice(10)
     ->save();
+
+$bundleProduct = $objectManager->create(\Magento\Catalog\Model\Product::class);
+$bundleProduct->setTypeId('bundle')
+    ->setId(607)
+    ->setAttributeSetId(4)
+    ->setWeight(2)
+    ->setWebsiteIds([1])
+    ->setName('Bundle Product')
+    ->setSku('bundle-product')
+    ->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH)
+    ->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
+    ->setStockData(['use_config_manage_stock' => 1, 'qty' => 100, 'is_qty_decimal' => 0, 'is_in_stock' => 1])
+    ->setPriceView(1)
+    ->setSkuType(1)
+    ->setWeightType(1)
+    ->setPriceType(1)
+    ->setShipmentType(0)
+    ->setPrice(10.0)
+    ->setDailyDealEnabled(1)
+    ->setDailyDealLimit(50)
+    ->setDailyDealInitialAmount(60)
+    ->setDailyDealFrom('2018-03-19 00:00:00')
+    ->setDailyDealTo('2031-03-22 08:00:00')
+    ->setDailyDealPrice(5)
+    ->setBundleOptionsData(
+        [
+            [
+                'title' => 'Bundle Product Items',
+                'default_title' => 'Bundle Product Items',
+                'type' => 'select', 'required' => 1,
+                'delete' => '',
+            ],
+        ]
+    )
+    ->setBundleSelectionsData(
+        [
+            [
+                [
+                    'product_id' => $product->getId(),
+                    'selection_price_value' => 2.75,
+                    'selection_qty' => 1,
+                    'selection_can_change_qty' => 1,
+                    'delete' => '',
+
+                ],
+            ],
+        ]
+    );
+
+if ($bundleProduct->getBundleOptionsData()) {
+    $options = [];
+    foreach ($bundleProduct->getBundleOptionsData() as $key => $optionData) {
+        if (!(bool)$optionData['delete']) {
+            $option = $objectManager->create(\Magento\Bundle\Api\Data\OptionInterfaceFactory::class)
+                ->create(['data' => $optionData]);
+            $option->setSku($bundleProduct->getSku());
+            $option->setOptionId(null);
+
+            $links = [];
+            $bundleLinks = $bundleProduct->getBundleSelectionsData();
+            if (!empty($bundleLinks[$key])) {
+                foreach ($bundleLinks[$key] as $linkData) {
+                    if (!(bool)$linkData['delete']) {
+                        /** @var \Magento\Bundle\Api\Data\LinkInterface $link */
+                        $link = $objectManager->create(\Magento\Bundle\Api\Data\LinkInterfaceFactory::class)
+                            ->create(['data' => $linkData]);
+                        $linkProduct = $productRepository->getById($linkData['product_id']);
+                        $link->setSku($linkProduct->getSku());
+                        $link->setQty($linkData['selection_qty']);
+                        $link->setPrice($linkData['selection_price_value']);
+                        if (isset($linkData['selection_can_change_qty'])) {
+                            $link->setCanChangeQuantity($linkData['selection_can_change_qty']);
+                        }
+                        $links[] = $link;
+                    }
+                }
+                $option->setProductLinks($links);
+                $options[] = $option;
+            }
+        }
+    }
+    $extension = $product->getExtensionAttributes();
+    $extension->setBundleProductOptions($options);
+    $bundleProduct->setExtensionAttributes($extension);
+}
+
+$productRepository->save($bundleProduct, true);
