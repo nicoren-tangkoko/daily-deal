@@ -73,6 +73,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         ];
 
         if($result['deal']){
+            $result['dailyDiscount'] = $this->productHelper->getSalePercentage($product);
             $priceAndDiscountWithoutDD = $this->getPriceAndDiscountWithoutDD($product);
             $result = array_merge($result, $priceAndDiscountWithoutDD);
         }
@@ -85,6 +86,10 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         $product = $this->getProduct($product);
 
         if(!$product or !$product->getId()){
+            return false;
+        }
+
+        if ($product->getTypeId() !== \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE) {
             return false;
         }
 

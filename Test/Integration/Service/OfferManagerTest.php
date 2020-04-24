@@ -53,7 +53,7 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
             $offersArray[] = $offer;
         }
 
-        $this->assertCount(6, $offersArray);
+        $this->assertCount(7, $offersArray);
         $this->assertEquals(600, $offersArray[0]->getId());
         $this->assertEquals(601, $offersArray[1]->getId());
 

@@ -107,6 +107,20 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('5.0000', $offerData['price']);
     }
 
+    /**
+     * @magentoAppArea frontend
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
+     * @magentoDataFixture loadProducts
+     * @magentoConfigFixture current_store daily_deal/general/active 1
+     * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 0
+     */
+    public function testItDisablesOfferForBundleProducts()
+    {
+        $offerData = $this->offerDataHelper->prepareOfferData(607);
+        $this->assertFalse($offerData['deal']);
+    }
+
     public static function loadProducts()
     {
         require __DIR__ . '/../_files/products.php';
