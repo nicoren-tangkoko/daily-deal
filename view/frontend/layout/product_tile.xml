@@ -11,13 +11,14 @@
                     <argument xsi:type="string" name="amount_presentation_format">(%1/%2)</argument>
                 </arguments>
             </block>
-            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.badge.dailydeal.old-discount.grid" template="MageSuite_DailyDeal::product/tile/old_discount.phtml" after="product.tile.badge.dailydeal.badge.grid">
+            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.badge.dailydeal.discount.grid" template="MageSuite_DailyDeal::product/tile/dailydeal_discount.phtml" after="product.tile.badge.dailydeal.badge.grid">
                 <arguments>
                     <argument xsi:type="string" name="wrapper_tag">li</argument>
                     <argument xsi:type="string" name="wrapper_css_class">cs-product-tile__badge-item cs-dailydeal__badge cs-dailydeal__badge--dd-discount</argument>
                     <argument xsi:type="string" name="css_class">cs-product-tile__badge cs-product-tile__badge--discount</argument>
                     <argument xsi:type="string" name="text_css_class">cs-product-tile__badge-text</argument>
                     <argument xsi:type="string" name="label" translate="true"></argument>
+                    <argument xsi:type="boolean" name="show_numeric_value">true</argument>
                     <argument xsi:type="string" name="value_prefix">-</argument>
                     <argument xsi:type="string" name="value_suffix">%</argument>
                 </arguments>
@@ -35,13 +36,14 @@
                     <argument xsi:type="string" name="amount_presentation_format">(%1/%2)</argument>
                 </arguments>
             </block>
-            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.badge.dailydeal.old-discount.list" template="MageSuite_DailyDeal::product/tile/old_discount.phtml" after="product.tile.badge.dailydeal.badge.list">
+            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.badge.dailydeal.discount.list" template="MageSuite_DailyDeal::product/tile/dailydeal_discount.phtml" after="product.tile.badge.dailydeal.badge.list">
                 <arguments>
                     <argument xsi:type="string" name="wrapper_tag">li</argument>
                     <argument xsi:type="string" name="wrapper_css_class">cs-product-tile__badge-item cs-dailydeal__badge cs-dailydeal__badge--dd-discount</argument>
                     <argument xsi:type="string" name="css_class">cs-product-tile__badge cs-product-tile__badge--discount</argument>
                     <argument xsi:type="string" name="text_css_class">cs-product-tile__badge-text</argument>
                     <argument xsi:type="string" name="label" translate="true"></argument>
+                    <argument xsi:type="boolean" name="show_numeric_value">true</argument>
                     <argument xsi:type="string" name="value_prefix">-</argument>
                     <argument xsi:type="string" name="value_suffix">%</argument>
                 </arguments>
