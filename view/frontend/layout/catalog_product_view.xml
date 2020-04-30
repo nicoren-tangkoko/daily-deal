@@ -3,9 +3,7 @@
     <body>
         <referenceContainer name="product.info.main">
             <container name="product.info.main.dailydeal" htmlTag="div" htmlClass="cs-buybox__daily-deal">
-                <block class="MageSuite\DailyDeal\Block\Product" 
-                       name="daily_deal_pdp" 
-                       template="MageSuite_DailyDeal::/counter.phtml">
+                <block class="MageSuite\DailyDeal\Block\Product" name="daily_deal_pdp" template="MageSuite_DailyDeal::/counter.phtml">
                     <arguments>
                         <argument xsi:type="string" name="counter_place">pdp</argument>
                         <argument xsi:type="string" name="additional_css_classes">cs-dailydeal--pdp cs-dailydeal--buybox</argument>
@@ -20,6 +18,27 @@
 
         <referenceContainer name="product.info.price" htmlClass="product-info-price cs-buybox__price">
             <block class="MageSuite\DailyDeal\Block\Product" name="product.info.price.dailydeal" template="MageSuite_DailyDeal::product/view/price-dailydeal.phtml" after="product.price.final" />
+        </referenceContainer>
+
+        <referenceContainer name="product.badges">
+            <block class="MageSuite\DailyDeal\Block\Product" name="product.page.badge.dailydeal" template="MageSuite_DailyDeal::product/view/badge-dailydeal-pdp.phtml" before="-">
+                <arguments>
+                    <argument xsi:type="string" name="wrapper_tag">li</argument>
+                    <argument xsi:type="string" name="wrapper_css_class">cs-page-product__badge-item cs-dailydeal__pdp-badge</argument>
+                    <argument xsi:type="string" name="css_class">cs-page-product__badge cs-page-product__badge--dailydeal cs-dailydeal__badge-pdp</argument>
+                    <argument xsi:type="string" name="text_css_class">cs-page-product__badge-text</argument>
+                </arguments>
+
+                <block class="MageSuite\ThemeHelpers\Block\Icon" name="product.page.badge.dailydeal.icon">
+                    <arguments>
+                        <argument name="icon_url" xsi:type="string">images/icons/clock.svg</argument>
+                        <argument name="css_class" xsi:type="string">cs-dailydeal__badge-pdp-icon</argument>
+                        <argument name="alt_text" xsi:type="string" translate="true"></argument>
+                        <argument name="inlined" xsi:type="boolean">true</argument>
+                        <argument name="lazy_loaded" xsi:type="boolean">false</argument>
+                    </arguments>
+                </block>
+            </block>
         </referenceContainer>
     </body>
 </page>
