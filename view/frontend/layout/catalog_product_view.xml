@@ -25,7 +25,7 @@
                 <arguments>
                     <argument xsi:type="string" name="wrapper_tag">li</argument>
                     <argument xsi:type="string" name="wrapper_css_class">cs-page-product__badge-item cs-dailydeal__pdp-badge</argument>
-                    <argument xsi:type="string" name="css_class">cs-page-product__badge cs-page-product__badge--dailydeal cs-dailydeal__badge-pdp</argument>
+                    <argument xsi:type="string" name="css_class">cs-page-product__badge cs-page-product__badge--dailydeal-pdp cs-dailydeal__badge-pdp</argument>
                     <argument xsi:type="string" name="text_css_class">cs-page-product__badge-text</argument>
                 </arguments>
 
