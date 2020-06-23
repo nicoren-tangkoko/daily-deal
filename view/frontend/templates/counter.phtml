@@ -8,7 +8,16 @@
     if ($dailyDealData and $dailyDealData['deal'] and ($dailyDealCounterPlace === 'pdp' or ($dailyDealCounterPlace === 'tile' and $dailyDealData['displayType'] === 'badge_counter'))): 
     $headerLabel = $block->getItemsLeftLabel();
 ?>
-    <div class="cs-dailydeal <?= $block->getAdditionalCssClasses() ?> <?php if ($dailyDealData['items'] and $block->getShowHeader()): echo $block->getModifierForQtyLimitation(); endif; ?>">
+    <div class="cs-dailydeal <?= $block->getAdditionalCssClasses() ?> <?php if ($dailyDealData['items'] and $block->getShowHeader()): echo $block->getModifierForQtyLimitation(); endif; ?>"
+        data-phrase-day="<?= __('Day') ?>"
+        data-phrase-days="<?= __('Days') ?>"
+        data-phrase-hour="<?= __('Hour') ?>"
+        data-phrase-hours="<?= __('Hours') ?>"
+        data-phrase-minute="<?= __('Min') ?>"
+        data-phrase-minutes="<?= __('Min') ?>"
+        data-phrase-second="<?= __('Sec') ?>"
+        data-phrase-seconds="<?= __('Sec') ?>"
+    >
         <?= $block->getChildHtml('hotspot.before.header') ?>
         <?php if ($dailyDealData['items'] and $block->getShowHeader()): ?>
             <?php
