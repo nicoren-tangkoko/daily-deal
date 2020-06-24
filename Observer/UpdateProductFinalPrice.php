@@ -12,12 +12,21 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
     /**
      * @var \MageSuite\DailyDeal\Model\OfferPriceIndexer
      */
-    private $offerPriceIndexer;
+    protected $offerPriceIndexer;
 
-    private $entityField;
+    /**
+     * @var ?/Zend_Db_Expr
+     */
+    protected $entityField;
 
-    private $storeField;
+    /**
+     * @var ?/Zend_Db_Expr
+     */
+    protected $storeField;
 
+    /**
+     * @var bool
+     */
     protected $finalPriceColumnExists = true;
 
     public function __construct(
@@ -59,7 +68,7 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
         $this->storeField = $eventData['store_field'];
     }
 
-    private function getFinalPrice($connection, $select)
+    protected function getFinalPrice($connection, $select)
     {
         $dailyDealColumns = $this->prepareDailyDealColumns($select);
 
@@ -78,8 +87,14 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
         return $finalPrice;
     }
 
-    private function prepareDailyDealColumns($select)
+    protected function prepareDailyDealColumns($select)
     {
+        $columnExist = $this->ensureColumnExistsInSelect($select, (string)$this->entityField);
+
+        if (!$columnExist) {
+            return [];
+        }
+
         $result['price'] = $this->offerPriceIndexer->addAttributeToSelect(
             $select,
             'daily_deal_price',
@@ -97,7 +112,24 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
         return $result;
     }
 
-    private function getPriceColumn($select)
+    protected function ensureColumnExistsInSelect($select, $entityField)
+    {
+        $columnExist = false;
+
+        foreach ($select->getPart(\Magento\Framework\DB\Select::COLUMNS) as $columnEntry) {
+            list($correlationName, $column, $alias) = $columnEntry;
+
+            $fullColumnName = $correlationName . '.' . $column;
+
+            if ($fullColumnName = $entityField) {
+                $columnExist = true;
+            }
+        }
+
+        return $columnExist;
+    }
+
+    protected function getPriceColumn($select)
     {
         $priceColumn = null;
 
@@ -120,7 +152,7 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
         return $priceColumn;
     }
 
-    private function applyFinalPriceToSelect($connection, $select, $finalPrice)
+    protected function applyFinalPriceToSelect($connection, $select, $finalPrice)
     {
         $columns = [];
 
