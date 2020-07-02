@@ -121,7 +121,7 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
 
             $fullColumnName = $correlationName . '.' . $column;
 
-            if ($fullColumnName = $entityField) {
+            if ($fullColumnName == $entityField) {
                 $columnExist = true;
             }
         }
