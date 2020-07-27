@@ -235,3 +235,49 @@ if ($bundleProduct->getBundleOptionsData()) {
 }
 
 $productRepository->save($bundleProduct, true);
+
+$product = $objectManager->create('Magento\Catalog\Model\Product');
+
+$product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
+    ->setId(608)
+    ->setAttributeSetId(4)
+    ->setName('Active offer low stock')
+    ->setSku('active_offer_low_stock')
+    ->setUrlKey('active_offer_low_stock')
+    ->setPrice(10)
+    ->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH)
+    ->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
+    ->setWebsiteIds([1])
+    ->setStockData(['use_config_manage_stock' => 1, 'qty' => 5, 'is_qty_decimal' => 0, 'is_in_stock' => 1])
+    ->setCanSaveCustomOptions(true)
+    ->setSpecialPrice(7)
+    ->setDailyDealEnabled(1)
+    ->setDailyDealLimit(50)
+    ->setDailyDealInitialAmount(60)
+    ->setDailyDealFrom('2018-03-19 00:00:00')
+    ->setDailyDealTo('2031-03-22 08:00:00')
+    ->setDailyDealPrice(5)
+    ->save();
+
+$product = $objectManager->create('Magento\Catalog\Model\Product');
+
+$product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
+    ->setId(609)
+    ->setAttributeSetId(4)
+    ->setName('Active offer ouf of stock')
+    ->setSku('active_offer_out_of_stock')
+    ->setUrlKey('active_offer_out_of_stock')
+    ->setPrice(10)
+    ->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH)
+    ->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
+    ->setWebsiteIds([1])
+    ->setStockData(['use_config_manage_stock' => 1, 'qty' => 5, 'is_qty_decimal' => 0, 'is_in_stock' => 0])
+    ->setCanSaveCustomOptions(true)
+    ->setSpecialPrice(7)
+    ->setDailyDealEnabled(1)
+    ->setDailyDealLimit(50)
+    ->setDailyDealInitialAmount(60)
+    ->setDailyDealFrom('2018-03-19 00:00:00')
+    ->setDailyDealTo('2031-03-22 08:00:00')
+    ->setDailyDealPrice(5)
+    ->save();

@@ -1,11 +1,12 @@
 <?php
-    /** @var \MageSuite\DailyDeal\Helper\OfferData $dailyDealHelper */
-    $dailyDealHelper = $this->helper('MageSuite\DailyDeal\Helper\OfferData');
-    $dailyDealData = $dailyDealHelper->prepareOfferData($block->getProduct());
+$product = $block->getProduct();
+/** @var \MageSuite\DailyDeal\Helper\OfferData $dailyDealHelper */
+$dailyDealHelper = $this->helper('MageSuite\DailyDeal\Helper\OfferData');
+$dailyDealData = $dailyDealHelper->prepareOfferData($product);
 
-    $dailyDealDiscount = $dailyDealData && $dailyDealData['deal'] ? $dailyDealData['dailyDiscount'] : '';
+$dailyDealDiscount = $dailyDealData && $dailyDealData['deal'] ? $dailyDealData['dailyDiscount'] : '';
 ?>
-<?php if ($dailyDealDiscount): ?>
+<?php if ($product->getIsSalable() && $dailyDealDiscount) : ?>
     <?php
         $wrapperTag = $block->getWrapperTag() ?? 'li';
 

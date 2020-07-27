@@ -63,13 +63,13 @@ class Product extends \Magento\Framework\View\Element\Template
     {
         $isActive = $this->configuration->isActive();
 
-        if(!$isActive){
+        if (!$isActive) {
             return false;
         }
 
         $product = $this->getProduct();
 
-        if(!$product){
+        if (!$product) {
             return false;
         }
 
@@ -78,7 +78,7 @@ class Product extends \Magento\Framework\View\Element\Template
         $offerData = $this->cache->load($cacheTag);
         $offerData = $offerData ? $this->serializer->unserialize($offerData) : null;
 
-        if(!$offerData){
+        if (!$offerData) {
             $offerData = $this->offerData->prepareOfferData($product);
 
             $this->cache->save(
@@ -108,4 +108,14 @@ class Product extends \Magento\Framework\View\Element\Template
         );
     }
 
+    public function isDailyDealPriceApplicable($dailyDealData)
+    {
+        return $dailyDealData && $dailyDealData['deal'] && $dailyDealData['displayType'] !== 'none';
+    }
+
+    public function isDailyDealCounterApplicable($dailyDealData)
+    {
+        $dailyDealCounterPlace = $this->getCounterPlace() ? $this->getCounterPlace() : 'pdp';
+        return  $dailyDealData && $dailyDealData['deal'] && ($dailyDealCounterPlace === 'pdp' || ($dailyDealCounterPlace === 'tile' && $dailyDealData['displayType'] === 'badge_counter'));
+    }
 }
