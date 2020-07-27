@@ -1,11 +1,13 @@
 <?php
     /** @var \MageSuite\DailyDeal\Helper\OfferData $dailyDealHelper */
+    /** @var $block \\MageSuite\DailyDeal\Block\Product */
+    $product = $block->getProduct();
     $dailyDealHelper = $this->helper('MageSuite\DailyDeal\Helper\OfferData');
-    $dailyDealData = $dailyDealHelper->prepareOfferData($block->getProduct());
+    $dailyDealData = $dailyDealHelper->prepareOfferData($product);
     $dailyDealCounterPlace = $block->getCounterPlace() ? $block->getCounterPlace() : 'pdp';
 ?>
 <?php
-    if ($dailyDealData and $dailyDealData['deal'] and ($dailyDealCounterPlace === 'pdp' or ($dailyDealCounterPlace === 'tile' and $dailyDealData['displayType'] === 'badge_counter'))): 
+    if ($product->getIsSalable() && $block->isDailyDealCounterApplicable($dailyDealData)):
     $headerLabel = $block->getItemsLeftLabel();
 ?>
     <div class="cs-dailydeal <?= $block->getAdditionalCssClasses() ?> <?php if ($dailyDealData['items'] and $block->getShowHeader()): echo $block->getModifierForQtyLimitation(); endif; ?>"

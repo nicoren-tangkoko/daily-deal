@@ -6,12 +6,13 @@
   */
  ?>
 <?php
+ /** @var  $block \MageSuite\DailyDeal\Block\Product */
 $product = $block->getProduct();
 $dailyDealHelper = $this->helper('MageSuite\DailyDeal\Helper\OfferData');
 $dailyDealData = $dailyDealHelper->prepareOfferData($product);
 $priceHtmlDeal = $dailyDealData && $dailyDealData['deal'] ? $dailyDealData['oldPriceHtmlOnPdp'] : '';
-
-if ($dailyDealData && $dailyDealData['deal'] && $dailyDealData['displayType'] !== 'none') {
+$block->isDailyDealPriceApplicable($dailyDealData);
+if ($product->getIsSalable() && $block->isDailyDealPriceApplicable($dailyDealData)) {
     echo '<div class="price-box price-final_price_without_daily_deal" style="display: none;">' . $priceHtmlDeal . '</div>';
 }
 ?>

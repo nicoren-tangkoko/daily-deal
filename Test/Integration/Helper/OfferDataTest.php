@@ -67,7 +67,6 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
         $this->assertNotContains('$5.00', $offerData['oldPriceHtmlOnTile']);
         $this->assertContains('$10.00', $offerData['oldPriceHtmlOnPdp']);
         $this->assertNotContains('$5.00', $offerData['oldPriceHtmlOnPdp']);
-
     }
 
     /**
@@ -85,6 +84,40 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($offerData['deal']);
 
         $this->assertEquals(2, $offerData['items']);
+    }
+
+    /**
+     * @magentoAppArea frontend
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
+     * @magentoDataFixture loadProducts
+     * @magentoConfigFixture current_store daily_deal/general/active 1
+     * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
+     */
+    public function testItReturnsActualStockWhenDealItemLimitHigher()
+    {
+        $offerData = $this->offerDataHelper->prepareOfferData(608);
+
+        $this->assertTrue($offerData['deal']);
+
+        $this->assertEquals(5, $offerData['items']);
+    }
+
+    /**
+     * @magentoAppArea frontend
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
+     * @magentoDataFixture loadProducts
+     * @magentoConfigFixture current_store daily_deal/general/active 1
+     * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
+     */
+    public function testItReturnsDisabledDealForOutOfStock()
+    {
+        $offerData = $this->offerDataHelper->prepareOfferData(609);
+
+        $this->assertFalse($offerData['deal']);
+
+        $this->assertEquals(0, $offerData['items']);
     }
 
     /**

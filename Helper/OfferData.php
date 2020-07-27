@@ -29,13 +29,16 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $productHelper;
 
+    protected $salableStockResolver;
+
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Framework\Stdlib\DateTime\DateTime $dateTime,
         \Magento\Catalog\Block\Product\View $productView,
-        \MageSuite\Frontend\Helper\Product $productHelper
+        \MageSuite\Frontend\Helper\Product $productHelper,
+        \MageSuite\DailyDeal\Service\SalableStockResolver $salableStockResolver
     ) {
         parent::__construct($context);
 
@@ -44,6 +47,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         $this->dateTime = $dateTime;
         $this->productView = $productView;
         $this->productHelper = $productHelper;
+        $this->salableStockResolver = $salableStockResolver;
     }
 
     public function prepareOfferData($product)
@@ -61,10 +65,10 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
-
+        $salableQty = $this->salableStockResolver->execute($product->getSku());
         $result =  [
             'deal' => $this->isOfferEnabled($product),
-            'items' => $isQtyLimitationEnabled ? $this->getOfferLimit($product) : 0,
+            'items' => $isQtyLimitationEnabled ? ($this->getOfferLimit($product) > $salableQty ? $salableQty : $this->getOfferLimit($product)) : 0,
             'from' => strtotime($product->getDailyDealFrom()),
             'initialAmount' => $product->getDailyDealInitialAmount(),
             'to' => strtotime($product->getDailyDealTo()),
@@ -90,6 +94,14 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         if ($product->getTypeId() !== \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE) {
+            return false;
+        }
+
+        if (!$product->getIsSalable()) {
+            return false;
+        }
+
+        if($this->salableStockResolver->execute($product->getSku()) < 0) {
             return false;
         }
 
