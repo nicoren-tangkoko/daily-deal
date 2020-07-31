@@ -1,6 +1,6 @@
 <?php
 
-namespace MageSuite\DailyDeal\Model\Component;
+namespace MageSuite\DailyDeal\ViewModel;
 
 class DailyDealCounter extends \Magento\Framework\DataObject
 {

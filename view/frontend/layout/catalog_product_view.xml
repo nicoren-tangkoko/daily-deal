@@ -6,7 +6,7 @@
                 <block class="MageSuite\DailyDeal\Block\Product" name="daily_deal_pdp" template="MageSuite_DailyDeal::/counter.phtml">
                     <arguments>
                         <argument xsi:type="string" name="counter_place">pdp</argument>
-                        <argument xsi:type="object" name="view_model">MageSuite\DailyDeal\Model\Component\DailyDealCounter</argument>
+                        <argument xsi:type="object" name="view_model">MageSuite\DailyDeal\ViewModel\DailyDealCounter</argument>
                         <argument xsi:type="string" name="additional_css_classes">cs-dailydeal--pdp cs-dailydeal--buybox</argument>
                         <argument xsi:type="boolean" name="show_header">true</argument>
                         <argument xsi:type="string" name="modifier_for_qty_limitation">cs-dailydeal--has-qty-limit</argument>
