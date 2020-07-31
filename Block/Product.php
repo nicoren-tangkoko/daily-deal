@@ -112,10 +112,4 @@ class Product extends \Magento\Framework\View\Element\Template
     {
         return $dailyDealData && $dailyDealData['deal'] && $dailyDealData['displayType'] !== 'none';
     }
-
-    public function isDailyDealCounterApplicable($dailyDealData)
-    {
-        $dailyDealCounterPlace = $this->getCounterPlace() ? $this->getCounterPlace() : 'pdp';
-        return  $dailyDealData && $dailyDealData['deal'] && ($dailyDealCounterPlace === 'pdp' || ($dailyDealCounterPlace === 'tile' && $dailyDealData['displayType'] === 'badge_counter'));
-    }
 }
