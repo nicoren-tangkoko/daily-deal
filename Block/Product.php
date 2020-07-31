@@ -107,9 +107,4 @@ class Product extends \Magento\Framework\View\Element\Template
             $this->storeManager->getStore()->getId()
         );
     }
-
-    public function isDailyDealPriceApplicable($dailyDealData)
-    {
-        return $dailyDealData && $dailyDealData['deal'] && $dailyDealData['displayType'] !== 'none';
-    }
 }

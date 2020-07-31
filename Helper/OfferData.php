@@ -192,4 +192,9 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
     {
         return  $dailyDealData && $dailyDealData['deal'] && ($dailyDealCounterPlace === 'pdp' || ($dailyDealCounterPlace === 'tile' && $dailyDealData['displayType'] === 'badge_counter'));
     }
+
+    public function isDailyDealPriceApplicable($dailyDealData)
+    {
+        return $dailyDealData && $dailyDealData['deal'] && $dailyDealData['displayType'] !== 'none';
+    }
 }
