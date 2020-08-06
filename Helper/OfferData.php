@@ -25,9 +25,9 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
     protected $productView;
 
     /**
-     * @var \MageSuite\Frontend\Helper\Product
+     * @var \MageSuite\Discount\Helper\Discount
      */
-    protected $productHelper;
+    protected $discountHelper;
 
     protected $salableStockResolver;
 
@@ -37,7 +37,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Framework\Stdlib\DateTime\DateTime $dateTime,
         \Magento\Catalog\Block\Product\View $productView,
-        \MageSuite\Frontend\Helper\Product $productHelper,
+        \MageSuite\Discount\Helper\Discount $discountHelper,
         \MageSuite\DailyDeal\Service\SalableStockResolver $salableStockResolver
     ) {
         parent::__construct($context);
@@ -46,7 +46,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         $this->productRepository = $productRepository;
         $this->dateTime = $dateTime;
         $this->productView = $productView;
-        $this->productHelper = $productHelper;
+        $this->discountHelper = $discountHelper;
         $this->salableStockResolver = $salableStockResolver;
     }
 
@@ -77,7 +77,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         ];
 
         if($result['deal']){
-            $result['dailyDiscount'] = $this->productHelper->getSalePercentage($product);
+            $result['dailyDiscount'] = $this->discountHelper->getSalePercentage($product);
             $priceAndDiscountWithoutDD = $this->getPriceAndDiscountWithoutDD($product);
             $result = array_merge($result, $priceAndDiscountWithoutDD);
         }
@@ -143,7 +143,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $finalPriceWithoutDailyDeal = $product->getPriceInfo()->getPrice(\MageSuite\DailyDeal\Pricing\Price\FinalPriceWithoutDailyDeal::PRICE_CODE)->getAmount()->getValue();
 
-        return $this->productHelper->getSalePercentage($product, $finalPriceWithoutDailyDeal);
+        return $this->discountHelper->getSalePercentage($product, $finalPriceWithoutDailyDeal);
     }
 
     public function displayOnTile()
@@ -178,7 +178,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         if (!is_int($product) and !is_string($product)) {
             return null;
         }
-        
+
         try {
             $product = $this->productRepository->getById($product);
         } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
