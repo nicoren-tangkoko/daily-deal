@@ -54,13 +54,13 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $isActive = $this->configuration->isActive();
 
-        if(!$isActive){
+        if (!$isActive) {
             return false;
         }
 
         $product = $this->getProduct($product);
 
-        if(!$product){
+        if (!$product) {
             return false;
         }
 
@@ -76,8 +76,8 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             'displayType' => $this->displayOnTile()
         ];
 
-        if($result['deal']){
-            $result['dailyDiscount'] = $this->discountHelper->getSalePercentage($product);
+        if ($result['deal']) {
+            $result['dailyDiscount'] = $this->discountHelper->getSalePercentage($product, $result['price']);
             $priceAndDiscountWithoutDD = $this->getPriceAndDiscountWithoutDD($product);
             $result = array_merge($result, $priceAndDiscountWithoutDD);
         }
@@ -89,7 +89,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $product = $this->getProduct($product);
 
-        if(!$product or !$product->getId()){
+        if (!$product || !$product->getId()) {
             return false;
         }
 
@@ -101,7 +101,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             return false;
         }
 
-        if($this->salableStockResolver->execute($product->getSku()) < 0) {
+        if ($this->salableStockResolver->execute($product->getSku()) < 0) {
             return false;
         }
 
@@ -156,13 +156,13 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         $offerLimit = $product->getDailyDealLimit();
         $quantityAndStockStatus = $product->getQuantityAndStockStatus();
 
-        if(!$quantityAndStockStatus or $product->getTypeId() === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE){
+        if (!$quantityAndStockStatus || $product->getTypeId() === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
             return $offerLimit;
         }
 
         $qty = isset($quantityAndStockStatus['qty']) ? $quantityAndStockStatus['qty'] : null;
 
-        if($qty === null or $qty < 0){
+        if ($qty === null || $qty < 0) {
             return $offerLimit;
         }
 
@@ -175,7 +175,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             return $product;
         }
 
-        if (!is_int($product) and !is_string($product)) {
+        if (!is_int($product) && !is_string($product)) {
             return null;
         }
 

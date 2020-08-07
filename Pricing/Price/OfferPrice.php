@@ -2,8 +2,6 @@
 
 namespace MageSuite\DailyDeal\Pricing\Price;
 
-use Magento\Catalog\Model\Product;
-
 class OfferPrice extends \Magento\Framework\Pricing\Price\AbstractPrice implements \Magento\Framework\Pricing\Price\BasePriceProviderInterface
 {
     /**
@@ -24,7 +22,7 @@ class OfferPrice extends \Magento\Framework\Pricing\Price\AbstractPrice implemen
     /**
      * @var \Magento\Framework\Registry
      */
-    private $registry;
+    protected $registry;
 
     public function __construct(
         \Magento\Framework\Pricing\SaleableInterface $saleableItem,
@@ -34,8 +32,7 @@ class OfferPrice extends \Magento\Framework\Pricing\Price\AbstractPrice implemen
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
         \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager,
         \Magento\Framework\Registry $registry
-    )
-    {
+    ) {
         parent::__construct($saleableItem, $quantity, $calculator, $priceCurrency);
 
         $this->configuration = $configuration;
@@ -47,7 +44,7 @@ class OfferPrice extends \Magento\Framework\Pricing\Price\AbstractPrice implemen
     {
         $isActive = $this->configuration->isActive();
 
-        if(!$isActive){
+        if (!$isActive) {
             return false;
         }
 
@@ -64,16 +61,12 @@ class OfferPrice extends \Magento\Framework\Pricing\Price\AbstractPrice implemen
     {
         if (!$this->value) {
 
-            $parentProduct = $this->offerManager->getParentProduct($this->product);
-
-            $product = $parentProduct ? $parentProduct : $this->product;
-
-            if(!$product or !$product->getId()){
+            if (!$this->product || !$this->product->getId()) {
                 $this->value = false;
                 return $this->value;
             }
 
-            $offerPrice = $this->offerManager->getOfferPrice($product);
+            $offerPrice = $this->offerManager->getOfferPrice($this->product);
             $priceInCurrentCurrency = $this->priceCurrency->convertAndRound($offerPrice);
 
             $this->value = $priceInCurrentCurrency ? floatval($priceInCurrentCurrency) : false;
