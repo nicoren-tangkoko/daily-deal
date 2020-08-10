@@ -61,6 +61,7 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('5.0000', $offerData['price']);
         $this->assertEquals('none', $offerData['displayType']);
 
+        $this->assertEquals(50, $offerData['dailyDiscount']);
         $this->assertEquals(30, $offerData['oldDiscount']);
 
         $this->assertContains('$10.00', $offerData['oldPriceHtmlOnTile']);
