@@ -19,7 +19,7 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      */
     protected $offerDataHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         $this->offerDataHelper = $this->objectManager->get(\MageSuite\DailyDeal\Helper\OfferData::class);

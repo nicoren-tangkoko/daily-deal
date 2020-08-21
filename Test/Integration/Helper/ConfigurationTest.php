@@ -17,7 +17,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
      */
     protected $configurationHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         $this->configurationHelper = $this->objectManager->get(\MageSuite\DailyDeal\Helper\Configuration::class);
