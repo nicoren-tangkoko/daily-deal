@@ -5,7 +5,7 @@
     "license": "OSL-3.0",
     "type": "magento2-module",
     "require": {
-        "creativestyle/magesuite-discount": "^1.0.0"
+        "creativestyle/magesuite-discount": "dev-feature-discount"
     },
     "autoload": {
         "files": [
