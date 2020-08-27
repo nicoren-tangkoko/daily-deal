@@ -28,7 +28,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      */
     protected $productBlock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         $this->coreRegistry = $this->objectManager->get(\Magento\Framework\Registry::class);
@@ -72,15 +72,18 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(50, $offerData['items']);
         $this->assertEquals(1521417600, $offerData['from']);
         $this->assertEquals(1931932800, $offerData['to']);
-        $this->assertEquals('5.0000', $offerData['price']);
+        $this->assertEquals(5.00, $offerData['price'], '', 2);
         $this->assertEquals('none', $offerData['displayType']);
 
         $this->assertEquals(30, $offerData['oldDiscount']);
 
-        $this->assertContains('$10.00', $offerData['oldPriceHtmlOnTile']);
-        $this->assertNotContains('$5.00', $offerData['oldPriceHtmlOnTile']);
-        $this->assertContains('$10.00', $offerData['oldPriceHtmlOnPdp']);
-        $this->assertNotContains('$5.00', $offerData['oldPriceHtmlOnPdp']);
+        $assertContains = method_exists($this, 'assertStringContainsString') ? 'assertStringContainsString' : 'assertContains';
+        $assertNotContains = method_exists($this, 'assertStringNotContainsString') ? 'assertStringNotContainsString' : 'assertNotContains';
+
+        $this->$assertContains('$10.00', $offerData['oldPriceHtmlOnTile']);
+        $this->$assertNotContains('$5.00', $offerData['oldPriceHtmlOnTile']);
+        $this->$assertContains('$10.00', $offerData['oldPriceHtmlOnPdp']);
+        $this->$assertNotContains('$5.00', $offerData['oldPriceHtmlOnPdp']);
     }
 
     /**
