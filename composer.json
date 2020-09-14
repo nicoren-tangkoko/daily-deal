@@ -1,16 +1,19 @@
 {
-  "name": "creativestyle/magesuite-daily-deal",
-  "description": "Daily deal extension",
-  "homepage": "https://creativestyle.de",
-  "license": "OSL-3.0",
-  "type": "magento2-module",
-  "autoload": {
-    "files": [
-      "registration.php"
-    ],
-    "psr-4": {
-      "MageSuite\\DailyDeal\\": ""
+    "name": "creativestyle/magesuite-daily-deal",
+    "description": "Daily deal extension",
+    "homepage": "https://creativestyle.de",
+    "license": "OSL-3.0",
+    "type": "magento2-module",
+    "require": {
+        "creativestyle/magesuite-discount": "^1.0.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MageSuite\\DailyDeal\\": ""
+        }
     }
-  }
 }
 

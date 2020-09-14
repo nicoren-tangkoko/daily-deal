@@ -61,6 +61,7 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(5.00, $offerData['price'], '', 2);
         $this->assertEquals('none', $offerData['displayType']);
 
+        $this->assertEquals(50, $offerData['dailyDiscount']);
         $this->assertEquals(30, $offerData['oldDiscount']);
 
         $assertContains = method_exists($this, 'assertStringContainsString') ? 'assertStringContainsString' : 'assertContains';
