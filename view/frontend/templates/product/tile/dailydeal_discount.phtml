@@ -1,6 +1,9 @@
 <?php
     /** @var \MageSuite\DailyDeal\Helper\OfferData $dailyDealHelper */
     $dailyDealHelper = $this->helper('MageSuite\DailyDeal\Helper\OfferData');
+
+    if($dailyDealHelper->isOfferEnabled($block->getProduct())):
+
     $dailyDealData = $dailyDealHelper->prepareOfferData($block->getProduct());
 
     $dailyDealDiscount = $dailyDealData && $dailyDealData['deal'] ? $dailyDealData['dailyDiscount'] : '';
@@ -31,4 +34,5 @@
             <span <?= $badgeTextClass ?>><?= $label ?> <span><?= $valuePrefix ?><?= $showNumericValue ?><?= $valueSuffix ?></span></span>
         </span>
     </<?= $wrapperTag ?>>
+<?php endif; ?>
 <?php endif; ?>
