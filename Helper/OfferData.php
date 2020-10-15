@@ -39,7 +39,8 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Catalog\Block\Product\View $productView,
         \MageSuite\Discount\Helper\Discount $discountHelper,
         \MageSuite\DailyDeal\Service\SalableStockResolver $salableStockResolver
-    ) {
+    )
+    {
         parent::__construct($context);
 
         $this->configuration = $configuration;
@@ -50,6 +51,10 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         $this->salableStockResolver = $salableStockResolver;
     }
 
+    /**
+     * @param $product \Magento\Catalog\Model\Product
+     * @return array|bool
+     */
     public function prepareOfferData($product)
     {
         $isActive = $this->configuration->isActive();
@@ -64,9 +69,13 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             return false;
         }
 
+        if ($product->getData('daily_deal_offer_data')) {
+            return $product->getData('daily_deal_offer_data');
+        }
+
         $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
         $salableQty = $this->salableStockResolver->execute($product->getSku());
-        $result =  [
+        $result = [
             'deal' => $this->isOfferEnabled($product),
             'items' => $isQtyLimitationEnabled ? ($this->getOfferLimit($product) > $salableQty ? $salableQty : $this->getOfferLimit($product)) : 0,
             'from' => strtotime($product->getDailyDealFrom()),
@@ -82,6 +91,8 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             $result = array_merge($result, $priceAndDiscountWithoutDD);
         }
 
+        $product->setData('daily_deal_offer_data', $result);
+
         return $result;
     }
 
@@ -90,6 +101,12 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         $product = $this->getProduct($product);
 
         if (!$product || !$product->getId()) {
+            return false;
+        }
+
+        $offerEnabled = (boolean)$product->getDailyDealEnabled();
+
+        if (!$offerEnabled) {
             return false;
         }
 
@@ -105,11 +122,6 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             return false;
         }
 
-        $offerEnabled = (boolean)$product->getDailyDealEnabled();
-
-        if (!$offerEnabled) {
-            return false;
-        }
 
         $offerTo = $product->getDailyDealTo();
 
@@ -190,7 +202,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function isDailyDealCounterApplicable($dailyDealData, $dailyDealCounterPlace)
     {
-        return  $dailyDealData && $dailyDealData['deal'] && ($dailyDealCounterPlace === 'pdp' || ($dailyDealCounterPlace === 'tile' && $dailyDealData['displayType'] === 'badge_counter'));
+        return $dailyDealData && $dailyDealData['deal'] && ($dailyDealCounterPlace === 'pdp' || ($dailyDealCounterPlace === 'tile' && $dailyDealData['displayType'] === 'badge_counter'));
     }
 
     public function isDailyDealPriceApplicable($dailyDealData)

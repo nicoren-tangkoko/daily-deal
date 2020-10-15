@@ -38,6 +38,10 @@ class DailyDealPriceContainerMix
                 return $result;
             }
 
+            if(!$this->offerDataHelper->isOfferEnabled($product)) {
+                return $result;
+            }
+
             $dailyDealData = $this->offerDataHelper->prepareOfferData($product);
 
             if ($dailyDealData && $dailyDealData['deal'] && $dailyDealData['displayType'] === 'badge_counter') {
