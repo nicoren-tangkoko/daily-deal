@@ -1,0 +1,19 @@
+"Requested amount of %1 isn't available.","Requested amount of %1 isn't available."
+"Requested amount of %1 in special price isn't available. %2 item(s) have been added with regular price.","Requested amount of %1 in special price isn't available. %2 item(s) have been added with regular price."
+"Offer limit cannot be greater than product quantity. This value was fixed automatically to %1","Offer limit cannot be greater than product quantity. This value was fixed automatically to %1"
+"Offer is ended and product was removed from the cart.","Offer is ended and product was removed from the cart."
+Day,Day
+Days,Days
+Hour,Hour
+Hours,Hours
+Min,Min
+Sec,Sec
+"Limited offer","Limited offer"
+MageSuite,MageSuite
+"Daily Deal","Daily Deal"
+General,General
+Enabled,Enabled
+"Use Qty limitation","Use Qty limitation"
+"Show on product tile","Show on product tile"
+"Limited time offer","Limited time offer"
+"items left","items left"
