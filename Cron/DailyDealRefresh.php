@@ -54,7 +54,7 @@ class DailyDealRefresh
         }
 
         if ($countChangedOffers > 0) {
-            $this->cache->clean([\MageSuite\ContentConstructorFrontend\Model\Component\DailyDealTeaser::CACHE_TAG]);
+            $this->cache->clean([\MageSuite\DailyDeal\Model\Offer::CACHE_TAG]);
         }
 
         return true;

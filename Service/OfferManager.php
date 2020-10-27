@@ -92,10 +92,10 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     {
         $this->setStoreId($storeId);
         $offers = $this->getOffers();
-        $counter = 0;
+        $amountOfChangedOffers = 0;
 
         if (empty($offers)) {
-            return $counter;
+            return $amountOfChangedOffers;
         }
 
         $this->getProductsQuantities(array_keys($offers));
@@ -109,10 +109,10 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
             }
 
             $this->applyAction($offer, $action);
-            $counter++;
+            $amountOfChangedOffers++;
         }
 
-        return $counter;
+        return $amountOfChangedOffers;
     }
 
     public function getOffers()
