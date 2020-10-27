@@ -36,8 +36,8 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     /**
      * @var \MageSuite\DailyDeal\Helper\Configuration
      */
-    protected $configuration; 
-    
+    protected $configuration;
+
     /**
      * @var \MageSuite\DailyDeal\Helper\OfferData
      */
@@ -91,28 +91,28 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     public function refreshOffers($storeId = null)
     {
         $this->setStoreId($storeId);
-
         $offers = $this->getOffers();
+        $amountOfChangedOffers = 0;
 
-        if(empty($offers)){
-            return false;
+        if (empty($offers)) {
+            return $amountOfChangedOffers;
         }
 
         $this->getProductsQuantities(array_keys($offers));
-
         $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
 
         foreach($offers as $offer){
             $action = $this->getOfferAction($offer, $isQtyLimitationEnabled);
 
-            if($action === null){
+            if ($action === null) {
                 continue;
             }
 
             $this->applyAction($offer, $action);
+            $amountOfChangedOffers++;
         }
 
-        return true;
+        return $amountOfChangedOffers;
     }
 
     public function getOffers()
