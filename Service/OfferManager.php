@@ -63,6 +63,11 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
      */
     protected $stockHelper;
 
+    /**
+     * @var \Magento\Catalog\Model\ResourceModel\Product\Action
+     */
+    protected $productResourceAction;
+
     public function __construct(
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
         \Magento\Quote\Model\Quote\TotalsCollector $totalsCollector,
@@ -73,7 +78,8 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         \MageSuite\DailyDeal\Model\ResourceModel\Offer $offerResource,
         \MageSuite\DailyDeal\Service\CacheCleaner $cacheCleaner,
         \Magento\Indexer\Model\IndexerFactory $indexerFactory,
-        \MageSuite\Frontend\Helper\Product\Stock $stockHelper
+        \MageSuite\Frontend\Helper\Product\Stock $stockHelper,
+        \Magento\Catalog\Model\ResourceModel\Product\Action $productResourceAction
     )
     {
         $this->quoteRepository = $quoteRepository;
@@ -86,6 +92,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         $this->cacheCleaner = $cacheCleaner;
         $this->indexerFactory = $indexerFactory;
         $this->stockHelper = $stockHelper;
+        $this->productResourceAction = $productResourceAction;
     }
 
     public function refreshOffers($storeId = null)
@@ -184,7 +191,13 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
             $product->getResource()->saveAttribute($product, 'daily_deal_enabled');
         }
 
-        $product->setStoreId(\Magento\Store\Model\Store::DEFAULT_STORE_ID)->save();
+        $this->productResourceAction->updateAttributes(
+            [$product->getId()],
+            [
+                'daily_deal_enabled' => $action
+            ],
+            \Magento\Store\Model\Store::DEFAULT_STORE_ID
+        );
 
         if($action == self::TYPE_REMOVE){
             $this->removeProductFromQuotes($product);
@@ -315,7 +328,13 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
             $product->getResource()->saveAttribute($product, 'daily_deal_limit');
         }
 
-        $product->setStoreId(\Magento\Store\Model\Store::DEFAULT_STORE_ID)->save();
+        $this->productResourceAction->updateAttributes(
+            [$product->getId()],
+            [
+                'daily_deal_limit' => $newValue
+            ],
+            \Magento\Store\Model\Store::DEFAULT_STORE_ID
+        );
 
         if($newValue == 0){
             $this->applyAction($product, self::TYPE_REMOVE);
