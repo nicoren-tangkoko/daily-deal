@@ -9,6 +9,16 @@ class DailyDealRefresh
     protected $cache;
 
     /**
+     * @var \Magento\Framework\Event\Manager
+     */
+    protected $eventManager;
+
+    /**
+     * @var \Magento\Framework\Indexer\CacheContext
+     */
+    protected $cacheContext;
+
+    /**
      * @var \MageSuite\DailyDeal\Helper\Configuration
      */
     protected $configuration;
@@ -25,12 +35,16 @@ class DailyDealRefresh
 
     public function __construct(
         \Magento\Framework\App\CacheInterface $cache,
+        \Magento\Framework\Event\Manager $eventManager,
+        \Magento\Framework\Indexer\CacheContext $cacheContext,
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager
     )
     {
         $this->cache = $cache;
+        $this->eventManager = $eventManager;
+        $this->cacheContext = $cacheContext;
         $this->configuration = $configuration;
         $this->storeManager = $storeManager;
         $this->offerManager = $offerManager;
@@ -55,6 +69,8 @@ class DailyDealRefresh
 
         if ($countChangedOffers > 0) {
             $this->cache->clean([\MageSuite\DailyDeal\Model\Offer::CACHE_TAG]);
+            $this->cacheContext->registerTags([\MageSuite\DailyDeal\Model\Offer::CACHE_TAG]);
+            $this->eventManager->dispatch('clean_cache_by_tags', ['object' => $this->cacheContext]);
         }
 
         return true;
