@@ -59,9 +59,9 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     protected $indexerFactory;
 
     /**
-     * @var \MageSuite\Frontend\Helper\Product\Stock
+     * @var \MageSuite\DailyDeal\Service\SalableStockResolver
      */
-    protected $stockHelper;
+    protected $salableStockResolver;
 
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Product\Action
@@ -78,7 +78,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         \MageSuite\DailyDeal\Model\ResourceModel\Offer $offerResource,
         \MageSuite\DailyDeal\Service\CacheCleaner $cacheCleaner,
         \Magento\Indexer\Model\IndexerFactory $indexerFactory,
-        \MageSuite\Frontend\Helper\Product\Stock $stockHelper,
+        \MageSuite\DailyDeal\Service\SalableStockResolver $salableStockResolver,
         \Magento\Catalog\Model\ResourceModel\Product\Action $productResourceAction
     )
     {
@@ -91,7 +91,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         $this->offerResource = $offerResource;
         $this->cacheCleaner = $cacheCleaner;
         $this->indexerFactory = $indexerFactory;
-        $this->stockHelper = $stockHelper;
+        $this->salableStockResolver = $salableStockResolver;
         $this->productResourceAction = $productResourceAction;
     }
 
@@ -105,7 +105,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
             return $amountOfChangedOffers;
         }
 
-        $this->getProductsQuantities(array_keys($offers));
+        $this->getProductsQuantities($offers);
         $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
 
         foreach($offers as $offer){
@@ -358,16 +358,17 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
             : $this->storeManager->getStore()->getId();
     }
 
-    private function getProductsQuantities($productIds)
+    protected function getProductsQuantities($items)
     {
-        $return = [];
+        $qtys = [];
 
-        $stockStatuses = $this->stockHelper->getStockStatuses($productIds);
-
-        foreach ($stockStatuses AS $productId => $stock) {
-            $return[$productId] = $stock->getQty();
+        foreach ($items as $product) {
+            $qtys[$product->getId()] = $this->salableStockResolver->execute(
+                $product->getSku(),
+                $this->storeId
+            );
         }
 
-        $this->productsQuantities = $return;
+        $this->productsQuantities = $qtys;
     }
 }
