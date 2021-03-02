@@ -29,6 +29,9 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $discountHelper;
 
+    /**
+     * @var \MageSuite\DailyDeal\Service\SalableStockResolver
+     */
     protected $salableStockResolver;
 
     public function __construct(

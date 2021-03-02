@@ -4,10 +4,30 @@ namespace MageSuite\DailyDeal\Service;
 
 class SalableStockResolver
 {
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
     protected $storeManager;
+
+    /**
+     * @var \Magento\InventorySalesApi\Api\GetProductSalableQtyInterface
+     */
     protected $getProductSalableQty;
+
+    /**
+     * @var \Magento\InventorySalesApi\Api\StockResolverInterface
+     */
     protected $stockResolver;
+
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
     protected $logger;
+
+    /**
+     * @var array
+     */
+    protected $productQuantityCache = [];
 
     public function __construct(
         \Magento\Store\Model\StoreManagerInterface $storeManager,
@@ -21,53 +41,33 @@ class SalableStockResolver
         $this->logger = $logger;
     }
 
-    public function execute($productSku)
-    {
-        $websiteCode = $this->getWebsiteCode();
-        if (!$websiteCode) {
-            return null;
-        }
-
-        $stockId = $this->getStockId($websiteCode);
-        if (!$stockId) {
-            return null;
-        }
-
-        try {
-            $salableQty = $this->getProductSalableQty->execute($productSku, $stockId);
-        } catch (\Magento\Framework\Exception\InputException $inputException) {
-            $salableQty = null;
-            $this->logger->error($inputException->getMessage());
-
-        } catch (\Magento\Framework\Exception\LocalizedException $localizedException) {
-            $salableQty = null;
-            $this->logger->error($localizedException->getMessage());
-        }
-
-        return $salableQty;
-    }
-
-    protected function getStockId($websiteCode)
+    public function execute(string $productSku, $storeId = null)
     {
         try {
-            $stockId = $this->stockResolver->execute(\Magento\InventorySalesApi\Api\Data\SalesChannelInterface::TYPE_WEBSITE, $websiteCode)->getStockId();
-        } catch (\Magento\Framework\Exception\NoSuchEntityException $noSuchEntityException) {
-            $stockId = null;
-            $this->logger->error($noSuchEntityException->getMessage());
+            $store = $this->storeManager->getStore($storeId);
+            $website = $store->getWebsite();
+            $stockId = $this->stockResolver->execute(
+                \Magento\InventorySalesApi\Api\Data\SalesChannelInterface::TYPE_WEBSITE,
+                $website->getCode()
+            )->getStockId();
+
+            if (!isset($this->productQuantityCache[$stockId][$productSku])) {
+                $salableQty = $this->getProductSalableQty->execute(
+                    $productSku,
+                    $stockId
+                );
+                $this->productQuantityCache[$stockId][$productSku] = $salableQty;
+            }
+
+            return $this->productQuantityCache[$stockId][$productSku];
+        } catch (\Magento\Framework\Exception\NoSuchEntityException
+        | \Magento\Framework\Exception\InputException
+        | \Magento\Framework\Exception\LocalizedException $e) {
+            // do nothing
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
         }
 
-        return $stockId;
-    }
-
-    protected function getWebsiteCode()
-    {
-        try {
-            $websiteCode = $this->storeManager->getWebsite()->getCode();
-        } catch (\Magento\Framework\Exception\LocalizedException $localizedException) {
-            $websiteCode = null;
-            $this->logger->error($localizedException->getMessage());
-        }
-
-        return $websiteCode;
+        return null;
     }
 }
