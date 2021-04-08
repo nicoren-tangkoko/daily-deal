@@ -80,8 +80,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         \Magento\Indexer\Model\IndexerFactory $indexerFactory,
         \MageSuite\DailyDeal\Service\SalableStockResolver $salableStockResolver,
         \Magento\Catalog\Model\ResourceModel\Product\Action $productResourceAction
-    )
-    {
+    ) {
         $this->quoteRepository = $quoteRepository;
         $this->totalsCollector = $totalsCollector;
         $this->dateTime = $dateTime;
@@ -109,7 +108,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
 
         foreach($offers as $offer){
-            $action = $this->getOfferAction($offer, $isQtyLimitationEnabled);
+            $action = $this->getOfferAction($offer, $isQtyLimitationEnabled, $storeId);
 
             if ($action === null) {
                 continue;
@@ -131,7 +130,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         return $items;
     }
 
-    public function getOfferAction($offer, $isQtyLimitationEnabled)
+    public function getOfferAction($offer, $isQtyLimitationEnabled, $storeId)
     {
         $offerData = $offer->getData();
 
@@ -145,37 +144,38 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
         if($offerData['daily_deal_enabled']){
 
-            if($productQty !== null and $productQty < 1){
+            // $productQty should be checked only for frontend stores, it doesn't make sense to check it for admin store
+            if($storeId != \Magento\Store\Model\Store::DEFAULT_STORE_ID && $productQty !== null && $productQty < 1){
                 return self::TYPE_REMOVE;
             }
 
-            if(!$from or !$to){
+            if(!$from || !$to){
                 return self::TYPE_REMOVE;
             }
 
-            if($from > $this->timestamp or $to < $this->timestamp){
+            if($from > $this->timestamp || $to < $this->timestamp){
                 return self::TYPE_REMOVE;
             }
 
-            if($isQtyLimitationEnabled and isset($offerData['daily_deal_limit']) and $offerData['daily_deal_limit'] !== null and (float)$offerData['daily_deal_limit'] == 0){
+            if($isQtyLimitationEnabled && isset($offerData['daily_deal_limit']) && $offerData['daily_deal_limit'] !== null && (float)$offerData['daily_deal_limit'] == 0){
                 return self::TYPE_REMOVE;
             }
 
         }else{
 
-            if($productQty !== null and $productQty < 1){
+            if($productQty !== null && $productQty < 1){
                 return null;
             }
 
-            if(!$from or !$to){
+            if(!$from || !$to){
                 return null;
             }
 
-            if($isQtyLimitationEnabled and isset($offerData['daily_deal_limit']) and $offerData['daily_deal_limit'] !== null and (float)$offerData['daily_deal_limit'] == 0){
+            if($isQtyLimitationEnabled && isset($offerData['daily_deal_limit']) && $offerData['daily_deal_limit'] !== null && (float)$offerData['daily_deal_limit'] == 0){
                 return null;
             }
 
-            if($from < $this->timestamp and $to > $this->timestamp){
+            if($from < $this->timestamp && $to > $this->timestamp){
                 return self::TYPE_ADD;
             }
         }
