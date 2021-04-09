@@ -87,15 +87,15 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
             $offersArray[] = $offer;
         }
 
-        $this->assertNull($this->offerManager->getOfferAction($offersArray[0], $qtyLimitation));
+        $this->assertNull($this->offerManager->getOfferAction($offersArray[0], $qtyLimitation, $storeId));
 
         $this->assertEquals(
             \MageSuite\DailyDeal\Service\OfferManager::TYPE_REMOVE,
-            $this->offerManager->getOfferAction($offersArray[1], $qtyLimitation));
+            $this->offerManager->getOfferAction($offersArray[1], $qtyLimitation, $storeId));
 
         $this->assertEquals(
             \MageSuite\DailyDeal\Service\OfferManager::TYPE_ADD,
-            $this->offerManager->getOfferAction($offersArray[2], $qtyLimitation));
+            $this->offerManager->getOfferAction($offersArray[2], $qtyLimitation, $storeId));
 
 
         $this->assertEquals(1, $offersArray[1]->getDailyDealEnabled());
