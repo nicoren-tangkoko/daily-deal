@@ -6,7 +6,7 @@ $dailyDealData = $dailyDealHelper->prepareOfferData($product);
 
 $dailyDealDiscount = $dailyDealData && $dailyDealData['deal'] ? $dailyDealData['dailyDiscount'] : '';
 ?>
-<?php if ($product->getIsSalable() && $dailyDealDiscount) : ?>
+<?php if ($dailyDealDiscount && $product->getIsSalable()) : ?>
     <?php
         $wrapperTag = $block->getWrapperTag() ?? 'li';
 
