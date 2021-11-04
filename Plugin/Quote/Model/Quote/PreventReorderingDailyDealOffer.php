@@ -49,22 +49,23 @@ class PreventReorderingDailyDealOffer
         \Magento\Quote\Model\Quote $quote,
         callable $proceed,
         \Magento\Catalog\Model\Product $product,
-        $request
+        $request = null,
+        $processMode = \Magento\Catalog\Model\Product\Type\AbstractType::PROCESS_MODE_FULL
     )
     {
         if (!$this->configuration->isActive()) {
-            return $proceed($product, $request);
+            return $proceed($product, $request, $processMode);
         }
 
         if (!$this->isReorderAction()) {
-            return $proceed($product, $request);
+            return $proceed($product, $request, $processMode);
         }
 
         $offerKey = \MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER;
         $isDailyDeal = $request->getData($offerKey);
 
         if (!$isDailyDeal) {
-            return $proceed($product, $request);
+            return $proceed($product, $request, $processMode);
         }
 
         return $quote;
