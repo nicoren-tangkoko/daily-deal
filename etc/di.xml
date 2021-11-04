@@ -36,6 +36,10 @@
         <plugin name="disable_reordering_offer" type="MageSuite\DailyDeal\Plugin\DisableReorderingOffer" sortOrder="10" />
     </type>
 
+    <type name="Magento\Quote\Model\Quote">
+        <plugin name="prevent_reordering_daily_deal_offer" type="MageSuite\DailyDeal\Plugin\Quote\Model\Quote\PreventReorderingDailyDealOffer" sortOrder="10" />
+    </type>
+
     <type name="Magento\Checkout\Controller\Cart\Index">
         <plugin name="recalculate_cart_on_view" type="MageSuite\DailyDeal\Plugin\RecalculateCartOnCartView" sortOrder="1" />
     </type>
