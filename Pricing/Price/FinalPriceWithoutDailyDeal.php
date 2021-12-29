@@ -2,8 +2,6 @@
 
 namespace MageSuite\DailyDeal\Pricing\Price;
 
-use Magento\Catalog\Model\Product;
-
 class FinalPriceWithoutDailyDeal extends \Magento\Framework\Pricing\Price\AbstractPrice implements \Magento\Framework\Pricing\Price\BasePriceProviderInterface
 {
     /**
@@ -12,6 +10,22 @@ class FinalPriceWithoutDailyDeal extends \Magento\Framework\Pricing\Price\Abstra
     const PRICE_CODE = 'final_price_without_daily_deal';
 
     protected $value;
+
+    /**
+     * @var array
+     */
+    protected $excludedPriceClasses;
+
+    public function __construct(
+        \Magento\Framework\Pricing\SaleableInterface $saleableItem,
+        $quantity,
+        \Magento\Framework\Pricing\Adjustment\CalculatorInterface $calculator,
+        \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
+        $excludedPriceClasses = []
+    ) {
+        $this->excludedPriceClasses = $excludedPriceClasses;
+        parent::__construct($saleableItem, $quantity, $calculator, $priceCurrency);
+    }
 
     public function getValue()
     {
@@ -45,16 +59,10 @@ class FinalPriceWithoutDailyDeal extends \Magento\Framework\Pricing\Price\Abstra
 
     private function isExcludedClass($class)
     {
-        if($class instanceof \Magento\Catalog\Pricing\Price\BasePrice){
-            return true;
-        }
-
-        if($class instanceof \Magento\Catalog\Pricing\Price\FinalPrice){
-            return true;
-        }
-
-        if($class instanceof \MageSuite\DailyDeal\Pricing\Price\OfferPrice){
-            return true;
+        foreach ($this->excludedPriceClasses as $className) {
+            if ($class instanceof $className) {
+                return true;
+            }
         }
 
         return false;

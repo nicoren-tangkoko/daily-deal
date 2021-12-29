@@ -63,4 +63,14 @@
         </arguments>
     </type>
 
+    <type name="MageSuite\DailyDeal\Pricing\Price\FinalPriceWithoutDailyDeal">
+        <arguments>
+            <argument name="excludedPriceClasses" xsi:type="array">
+                <item name="base_price" xsi:type="string">Magento\Catalog\Pricing\Price\BasePrice</item>
+                <item name="final_price" xsi:type="string">Magento\Catalog\Pricing\Price\FinalPrice</item>
+                <item name="offer_price" xsi:type="string">MageSuite\DailyDeal\Pricing\Price\OfferPrice</item>
+            </argument>
+        </arguments>
+    </type>
+    
 </config>
