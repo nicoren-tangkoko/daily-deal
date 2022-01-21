@@ -1,7 +1,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <body>
-        <referenceBlock name="product.tile.container.badges.grid">
-            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.badge.dailydeal.badge.grid" template="MageSuite_DailyDeal::product/tile/badge.phtml" before="-">
+        <referenceBlock name="product.tile.container.badges">
+            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.badge.dailydeal.badge" template="MageSuite_DailyDeal::product/tile/badge.phtml" before="-">
                 <arguments>
                     <argument xsi:type="string" name="wrapper_tag">li</argument>
                     <argument xsi:type="string" name="wrapper_css_class">cs-product-tile__badge-item cs-dailydeal__badge cs-dailydeal__badge--amount</argument>
@@ -11,32 +11,7 @@
                     <argument xsi:type="string" name="amount_presentation_format">(%1/%2)</argument>
                 </arguments>
             </block>
-            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.badge.dailydeal.discount.grid" template="MageSuite_DailyDeal::product/tile/dailydeal_discount.phtml" after="product.tile.badge.dailydeal.badge.grid">
-                <arguments>
-                    <argument xsi:type="string" name="wrapper_tag">li</argument>
-                    <argument xsi:type="string" name="wrapper_css_class">cs-product-tile__badge-item cs-dailydeal__badge cs-dailydeal__badge--dd-discount</argument>
-                    <argument xsi:type="string" name="css_class">cs-product-tile__badge cs-product-tile__badge--discount</argument>
-                    <argument xsi:type="string" name="text_css_class">cs-product-tile__badge-text</argument>
-                    <argument xsi:type="string" name="label" translate="true"></argument>
-                    <argument xsi:type="boolean" name="show_numeric_value">true</argument>
-                    <argument xsi:type="string" name="value_prefix">-</argument>
-                    <argument xsi:type="string" name="value_suffix">%</argument>
-                </arguments>
-            </block>
-        </referenceBlock>
-
-        <referenceBlock name="product.tile.container.badges.list">
-            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.badge.dailydeal.badge.list" template="MageSuite_DailyDeal::product/tile/badge.phtml" before="-">
-                <arguments>
-                    <argument xsi:type="string" name="wrapper_tag">li</argument>
-                    <argument xsi:type="string" name="wrapper_css_class">cs-product-tile__badge-item cs-dailydeal__badge cs-dailydeal__badge--amount</argument>
-                    <argument xsi:type="string" name="css_class">cs-product-tile__badge cs-product-tile__badge--dailydeal</argument>
-                    <argument xsi:type="string" name="text_css_class">cs-product-tile__badge-text</argument>
-                    <argument xsi:type="string" name="label" translate="true">Limited offer</argument>
-                    <argument xsi:type="string" name="amount_presentation_format">(%1/%2)</argument>
-                </arguments>
-            </block>
-            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.badge.dailydeal.discount.list" template="MageSuite_DailyDeal::product/tile/dailydeal_discount.phtml" after="product.tile.badge.dailydeal.badge.list">
+            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.badge.dailydeal.discount" template="MageSuite_DailyDeal::product/tile/dailydeal_discount.phtml" after="product.tile.badge.dailydeal.badge">
                 <arguments>
                     <argument xsi:type="string" name="wrapper_tag">li</argument>
                     <argument xsi:type="string" name="wrapper_css_class">cs-product-tile__badge-item cs-dailydeal__badge cs-dailydeal__badge--dd-discount</argument>
@@ -51,7 +26,7 @@
         </referenceBlock>
 
         <referenceBlock name="product.tile.container.thumbnail.link">
-            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.dailydeal.counter.grid" template="MageSuite_DailyDeal::counter.phtml" after="product.tile.container.badges.grid">
+            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.dailydeal.counter" template="MageSuite_DailyDeal::counter.phtml" after="product.tile.container.badges">
                 <arguments>
                     <argument xsi:type="string" name="counter_place">tile</argument>
                     <argument xsi:type="string" name="additional_css_classes">cs-product-tile__dailydeal cs-product-tile__dailydeal--grid cs-dailydeal--tile</argument>
@@ -62,23 +37,8 @@
             </block>
         </referenceBlock>
 
-        <referenceBlock name="product.tile.additional.wrapper.list">
-            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.dailydeal.counter.list" template="MageSuite_DailyDeal::counter.phtml" after="product.tile.addtolinks.wrapper.list">
-                <arguments>
-                    <argument xsi:type="string" name="counter_place">tile</argument>
-                    <argument xsi:type="string" name="additional_css_classes">cs-product-tile__dailydeal cs-product-tile__dailydeal--list cs-dailydeal--tile</argument>
-                    <argument xsi:type="string" name="modifier_for_qty_limitation">cs-dailydeal--has-qty-limit</argument>
-                    <argument xsi:type="boolean" name="show_header">true</argument>
-                    <argument xsi:type="string" translate="true" name="availability_text_after">items left</argument>
-                </arguments>
-            </block>
-        </referenceBlock>
-
-        <referenceBlock name="product.tile.price.wrapper.grid">
-            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.dailydeal.old-price.grid" template="MageSuite_DailyDeal::product/tile/old_price.phtml" after="product.tile.price.grid" />
-        </referenceBlock>
-        <referenceBlock name="product.tile.price.wrapper.list">
-            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.dailydeal.old-price.list" template="MageSuite_DailyDeal::product/tile/old_price.phtml" after="product.tile.price.list" />
+        <referenceBlock name="product.tile.price.wrapper">
+            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.dailydeal.old-price" template="MageSuite_DailyDeal::product/tile/old_price.phtml" after="product.tile.price" />
         </referenceBlock>
     </body>
 </page>
