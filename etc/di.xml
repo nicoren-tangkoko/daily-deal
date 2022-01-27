@@ -44,10 +44,6 @@
         <plugin name="recalculate_cart_on_view" type="MageSuite\DailyDeal\Plugin\RecalculateCartOnCartView" sortOrder="1" />
     </type>
 
-    <type name="Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData\PriceConfigurable">
-        <plugin name="update_price_index" type="MageSuite\DailyDeal\Plugin\Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData\PriceConfigurable\UpdatePriceIndex" sortOrder="1" />
-    </type>
-
     <type name="MageSuite\ProductTile\Block\Tile\Container">
         <plugin name="add_daily_deal_container_css_class" type="MageSuite\DailyDeal\Plugin\ProductTile\Block\Tile\Container\DailyDealPriceContainerMix" />
     </type>
@@ -72,5 +68,5 @@
             </argument>
         </arguments>
     </type>
-    
+
 </config>
