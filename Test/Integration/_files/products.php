@@ -1,7 +1,5 @@
 <?php
 
-use Magento\Framework\App\Filesystem\DirectoryList;
-
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 $productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
 $product = $objectManager->create('Magento\Catalog\Model\Product');
@@ -210,7 +208,7 @@ if ($bundleProduct->getBundleOptionsData()) {
             $bundleLinks = $bundleProduct->getBundleSelectionsData();
             if (!empty($bundleLinks[$key])) {
                 foreach ($bundleLinks[$key] as $linkData) {
-                    if (!(bool)$linkData['delete']) {
+                    if (!(bool)$linkData['delete']) { // phpcs:ignore
                         /** @var \Magento\Bundle\Api\Data\LinkInterface $link */
                         $link = $objectManager->create(\Magento\Bundle\Api\Data\LinkInterfaceFactory::class)
                             ->create(['data' => $linkData]);
@@ -218,7 +216,7 @@ if ($bundleProduct->getBundleOptionsData()) {
                         $link->setSku($linkProduct->getSku());
                         $link->setQty($linkData['selection_qty']);
                         $link->setPrice($linkData['selection_price_value']);
-                        if (isset($linkData['selection_can_change_qty'])) {
+                        if (isset($linkData['selection_can_change_qty'])) {  // phpcs:ignore
                             $link->setCanChangeQuantity($linkData['selection_can_change_qty']);
                         }
                         $links[] = $link;
