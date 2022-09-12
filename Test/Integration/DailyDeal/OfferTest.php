@@ -65,7 +65,7 @@ class OfferTest extends \PHPUnit\Framework\TestCase
 
         $items = $this->cart->getQuote()->getAllItems();
 
-        foreach($items AS $item){
+        foreach ($items as $item) {
 
             $this->assertEquals(20, $item->getProduct()->getPrice());
             $this->assertEquals(5, $item->getCustomPrice());
@@ -105,7 +105,7 @@ class OfferTest extends \PHPUnit\Framework\TestCase
 
         $items = $this->cart->getQuote()->getAllItems();
 
-        foreach($items AS $item){
+        foreach ($items as $item) {
 
             $this->assertEquals(20, $item->getProduct()->getPrice());
             $this->assertEquals(5, $item->getCustomPrice());
@@ -177,7 +177,7 @@ class OfferTest extends \PHPUnit\Framework\TestCase
 
         $itemsQty = [];
 
-        foreach($items AS $item){
+        foreach ($items as $item) {
             $itemsQty[] = $item->getQty();
         }
 
