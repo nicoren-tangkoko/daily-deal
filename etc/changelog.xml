@@ -5,7 +5,7 @@
         description="This module provide daily deal functionality."
         url="https://github.com/magesuite/daily-deal">
         <changelog>
-            <tag version="v2.0.1" date="2022-09-21">
+            <tag version="v2.1.1" date="2022-09-30">
                 <entry>
                     <type>FIX</type>
                     <overview>Fix the checkout price of the related product that is the daily deal</overview>
