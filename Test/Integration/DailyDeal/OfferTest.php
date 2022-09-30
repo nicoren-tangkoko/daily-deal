@@ -105,11 +105,38 @@ class OfferTest extends \PHPUnit\Framework\TestCase
 
         $items = $this->cart->getQuote()->getAllItems();
 
-        foreach($items AS $item){
-
+        foreach ($items AS $item) {
             $this->assertEquals(20, $item->getProduct()->getPrice());
             $this->assertEquals(5, $item->getCustomPrice());
         }
+    }
+
+    /**
+     * @magentoAppArea frontend
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
+     * @magentoDataFixture loadProducts
+     * @magentoConfigFixture current_store daily_deal/general/active 1
+     * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
+     */
+    public function testItAddsRelatedProductWithSpecialPrice()
+    {
+        $product = $this->productRepository->get('actual_offer');
+        $relatedProduct = $this->productRepository->get('smaller_qty');
+
+        $this->cart->addProduct($product, []);
+        $this->cart->addProductsByIds([$relatedProduct->getId()]);
+
+        $items = $this->cart->getQuote()->getAllItems();
+
+        $productItem = $this->cart->getQuote()->getItemByProduct($product);
+        $relatedProductItem = $this->cart->getQuote()->getItemByProduct($relatedProduct);
+
+        $this->assertEquals(20, $productItem->getProduct()->getPrice());
+        $this->assertEquals(5, $productItem->getCustomPrice());
+
+        $this->assertEquals(20, $relatedProductItem->getProduct()->getPrice());
+        $this->assertEquals(5, $relatedProductItem->getCustomPrice());
     }
 
     /**
