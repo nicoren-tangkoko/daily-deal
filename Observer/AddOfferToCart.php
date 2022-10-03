@@ -17,12 +17,12 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
     /**
      * @var \Magento\Framework\Serialize\SerializerInterface
      */
-    private $serializer;
+    protected $serializer;
 
     /**
      * @var \Magento\Framework\Message\ManagerInterface
      */
-    private $messageManager;
+    protected $messageManager;
 
     /**
      * @var \Magento\Framework\Controller\ResultFactory
@@ -41,8 +41,7 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
         \Magento\Framework\Message\ManagerInterface $messageManager,
         \Magento\Framework\Controller\ResultFactory $resultFactory,
         \Magento\Checkout\Model\Cart $cart
-    )
-    {
+    ) {
         $this->configuration = $configuration;
         $this->offerManager = $offerManager;
         $this->serializer = $serializer;
@@ -53,7 +52,7 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if(!$this->configuration->isActive()){
+        if (!$this->configuration->isActive()) {
             return $this;
         }
 
@@ -70,14 +69,14 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
 
         $offerPrice = $this->offerManager->getOfferPrice($product);
 
-        if(!$offerPrice){
+        if (!$offerPrice) {
             return $this;
         }
 
         $finalPrice = $product->getFinalPrice();
         $offerPrice = min($finalPrice, $offerPrice);
 
-        if(!$this->configuration->isQtyLimitationEnabled()){
+        if (!$this->configuration->isQtyLimitationEnabled()) {
             $this->updateProductPrice($item, $offerPrice);
 
             return $this;
@@ -86,7 +85,7 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
         $qty = $item->getQty();
         $offerLimit = $this->offerManager->getOfferLimit($product);
 
-        if($product->getTypeId() != 'simple'){
+        if ($product->getTypeId() != 'simple') {
 
             // For configurable items we need to check amount of products currently in the cart
             $qtyAmountInCart = $this->offerManager->getProductQtyInCart($product, $item->getQuoteId());
@@ -98,12 +97,12 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
             $offerLimit = max(0, $offerLimit - $qtyAmountInCart);
         }
 
-        if(!$offerLimit){
+        if (!$offerLimit) {
             $this->messageManager->addNoticeMessage(__('Requested amount of %1 isn\'t available.', $product->getName()));
             exit();
         }
 
-        if($qty <= $offerLimit){
+        if ($qty <= $offerLimit) {
             $this->updateProductPrice($item, $offerPrice);
 
             return $this;
@@ -168,6 +167,6 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
 
         try {
             $this->cart->getQuote()->addProduct($product, $request);
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {}
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {} // phpcs:ignore
     }
 }
