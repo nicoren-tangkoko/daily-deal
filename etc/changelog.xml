@@ -10,6 +10,7 @@
                     <type>FIX</type>
                     <overview>Fix the checkout price of the related product that is the daily deal</overview>
                     <ticket_id>HAKA-1602</ticket_id>
+            </tag>
             <tag version="v2.1.2" date="2022-09-08">
                 <entry>
                     <type>FIX</type>
