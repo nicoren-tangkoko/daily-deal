@@ -11,6 +11,6 @@ class UpdateProductFinalPriceTest extends AbstractUpdateProductFinalPrice
      */
     public function testTileSimpleProductPrice()
     {
-        $this->runTileSimpleProductPrice();
+        $this->runTileSimpleProductPriceTest();
     }
 }
