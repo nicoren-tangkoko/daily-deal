@@ -8,35 +8,12 @@ namespace MageSuite\DailyDeal\Test\Integration\DailyDeal;
  */
 class OfferTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \Magento\TestFramework\ObjectManager
-     */
-    protected $objectManager;
-
-    /**
-     * @var \Magento\Checkout\Model\Cart
-     */
-    private $cart;
-
-    /**
-     * @var \MageSuite\DailyDeal\Service\OfferManager
-     */
-    protected $offerManager;
-
-    /**
-     * @var \MageSuite\DailyDeal\Model\ResourceModel\Offer
-     */
-    protected $offerResource;
-
-    /**
-     * @var \Magento\Quote\Model\QuoteManagement
-     */
-    protected $quoteManagement;
-
-    /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface
-     */
-    protected $productRepository;
+    protected ?\Magento\Checkout\Model\Cart $cart;
+    protected ?\Magento\Framework\ObjectManagerInterface $objectManager;
+    protected ?\MageSuite\DailyDeal\Service\OfferManager $offerManager;
+    protected ?\MageSuite\DailyDeal\Model\ResourceModel\Offer $offerResource;
+    protected ?\Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
+    protected ?\Magento\Quote\Model\QuoteManagement $quoteManagement;
 
     public function setUp(): void
     {
@@ -44,19 +21,19 @@ class OfferTest extends \PHPUnit\Framework\TestCase
         $this->cart = $this->objectManager->get(\Magento\Checkout\Model\Cart::class);
         $this->offerManager = $this->objectManager->get(\MageSuite\DailyDeal\Service\OfferManager::class);
         $this->offerResource = $this->objectManager->get(\MageSuite\DailyDeal\Model\ResourceModel\Offer::class);
-        $this->quoteManagement = $this->objectManager->get(\Magento\Quote\Model\QuoteManagement::class);
         $this->productRepository = $this->objectManager->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
+        $this->quoteManagement = $this->objectManager->get(\Magento\Quote\Model\QuoteManagement::class);
     }
 
     /**
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItAddsProductWithCorrectValues()
+    public function testItAddsProductWithCorrectValues(): void
     {
         $product = $this->productRepository->get('actual_offer');
         $offerKey = \MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER;
@@ -88,11 +65,11 @@ class OfferTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItAddProductWithSpecialPrice()
+    public function testItAddProductWithSpecialPrice(): void
     {
         $product = $this->productRepository->get('offer_with_special_price');
 
@@ -116,7 +93,7 @@ class OfferTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
@@ -127,8 +104,6 @@ class OfferTest extends \PHPUnit\Framework\TestCase
 
         $this->cart->addProduct($product, []);
         $this->cart->addProductsByIds([$relatedProduct->getId()]);
-
-        $items = $this->cart->getQuote()->getAllItems();
 
         $productItem = $this->cart->getQuote()->getItemByProduct($product);
         $relatedProductItem = $this->cart->getQuote()->getItemByProduct($relatedProduct);
@@ -144,11 +119,11 @@ class OfferTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItDecreaseOfferUsage()
+    public function testItDecreaseOfferUsage(): void
     {
         $product = $this->productRepository->get('actual_offer');
 
@@ -165,11 +140,11 @@ class OfferTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItDecreaseOfferUsageAfterCreateOrder()
+    public function testItDecreaseOfferUsageAfterCreateOrder(): void
     {
         $this->markTestSkipped();
         $qty = 2;
@@ -188,11 +163,11 @@ class OfferTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItLimitProductQtyInCart()
+    public function testItLimitProductQtyInCart(): void
     {
         $storeId = 1;
 
@@ -212,17 +187,35 @@ class OfferTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([20, 5], $itemsQty);
     }
 
-    public static function loadProducts()
+    /**
+     * @magentoAppArea frontend
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
+     * @magentoConfigFixture current_store daily_deal/general/active 1
+     * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
+     */
+    public function testAddToCartIfOfferLimitIsEnabledButNotSet(): void
     {
-        require __DIR__ . '/../_files/products.php';
+        $storeId = 1;
+
+        $product = $this->productRepository->get('actual_offer');
+        $product->setDailyDealLimit(null);
+
+        $this->cart->addProduct($product, ['qty' => 1]);
+
+        $items = $this->cart->getQuote()->getAllItems();
+
+        $itemsQty = [];
+
+        foreach ($items as $item) {
+            $itemsQty[] = $item->getQty();
+        }
+
+        $this->assertEquals([1], $itemsQty);
     }
 
-    public static function loadProductsRollback()
-    {
-        require __DIR__ . '/../_files/products_rollback.php';
-    }
-
-    private function prepareQuote($product, $qty)
+    protected function prepareQuote($product, $qty): \Magento\Quote\Api\Data\CartInterface
     {
         $this->cart->addProduct($product, ['qty' => $qty]);
 
