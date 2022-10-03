@@ -4,50 +4,27 @@ namespace MageSuite\DailyDeal\Observer;
 
 class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
 {
-    /**
-     * @var \MageSuite\DailyDeal\Helper\Configuration
-     */
-    protected $configuration;
-
-    /**
-     * @var \MageSuite\DailyDeal\Service\OfferManagerInterface
-     */
-    protected $offerManager;
-
-    /**
-     * @var \Magento\Framework\Serialize\SerializerInterface
-     */
-    protected $serializer;
-
-    /**
-     * @var \Magento\Framework\Message\ManagerInterface
-     */
-    protected $messageManager;
-
-    /**
-     * @var \Magento\Framework\Controller\ResultFactory
-     */
-    protected $resultFactory;
-
-    /**
-     * @var \Magento\Checkout\Model\Cart
-     */
-    protected $cart;
+    protected \Magento\Checkout\Model\Cart $cart;
+    protected \MageSuite\DailyDeal\Helper\Configuration $configuration;
+    protected \Magento\Framework\Message\ManagerInterface $messageManager;
+    protected \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager;
+    protected \Magento\Framework\Controller\ResultFactory $resultFactory;
+    protected \Magento\Framework\Serialize\SerializerInterface $serializer;
 
     public function __construct(
+        \Magento\Checkout\Model\Cart $cart,
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
-        \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager,
-        \Magento\Framework\Serialize\SerializerInterface $serializer,
         \Magento\Framework\Message\ManagerInterface $messageManager,
+        \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager,
         \Magento\Framework\Controller\ResultFactory $resultFactory,
-        \Magento\Checkout\Model\Cart $cart
+        \Magento\Framework\Serialize\SerializerInterface $serializer
     ) {
-        $this->configuration = $configuration;
-        $this->offerManager = $offerManager;
-        $this->serializer = $serializer;
-        $this->messageManager = $messageManager;
-        $this->resultFactory = $resultFactory;
         $this->cart = $cart;
+        $this->configuration = $configuration;
+        $this->messageManager = $messageManager;
+        $this->offerManager = $offerManager;
+        $this->resultFactory = $resultFactory;
+        $this->serializer = $serializer;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
@@ -75,17 +52,17 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
 
         $finalPrice = $product->getFinalPrice();
         $offerPrice = min($finalPrice, $offerPrice);
+        $offerLimit = $this->offerManager->getOfferLimit($product);
 
-        if (!$this->configuration->isQtyLimitationEnabled()) {
+        if (!$this->configuration->isQtyLimitationEnabled() || empty($offerLimit)) {
             $this->updateProductPrice($item, $offerPrice);
 
             return $this;
         }
 
         $qty = $item->getQty();
-        $offerLimit = $this->offerManager->getOfferLimit($product);
 
-        if ($product->getTypeId() != 'simple') {
+        if ($product->getTypeId() != \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE) {
 
             // For configurable items we need to check amount of products currently in the cart
             $qtyAmountInCart = $this->offerManager->getProductQtyInCart($product, $item->getQuoteId());
