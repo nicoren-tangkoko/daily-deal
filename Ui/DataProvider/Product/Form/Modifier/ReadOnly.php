@@ -30,7 +30,7 @@ class ReadOnly extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Ab
 
         $elementPath = $this->arrayManager->findPath($field, $meta, null, 'children');
 
-        if(!$elementPath){
+        if (!$elementPath) {
             return $meta;
         }
 
