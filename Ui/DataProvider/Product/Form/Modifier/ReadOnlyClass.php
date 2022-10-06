@@ -2,7 +2,7 @@
 
 namespace MageSuite\DailyDeal\Ui\DataProvider\Product\Form\Modifier;
 
-class ReadOnly extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier
+class ReadOnlyClass extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier
 {
     protected $arrayManager;
 
